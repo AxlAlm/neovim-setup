@@ -6,4 +6,12 @@ vim.keymap.set('n', '<leader>ps', function()
 end)
 
 
-require('telescope').setup { defaults = { file_ignore_patterns = { "node_modules" } } }
+require('telescope').setup {
+    defaults = { file_ignore_patterns = { "node_modules", ".git/", ".cache" } },
+    pickers = {
+        find_files = {
+            hidden = true
+        }
+
+    }
+}
