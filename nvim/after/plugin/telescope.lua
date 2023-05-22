@@ -7,7 +7,7 @@ end)
 
 
 require('telescope').setup {
-    defaults = { file_ignore_patterns = { "node_modules", ".git/", ".cache" } },
+    defaults = { file_ignore_patterns = { "node_modules", ".git/", ".cache", ".aws" } },
     pickers = {
         find_files = {
             hidden = true
