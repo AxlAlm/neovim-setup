@@ -19,11 +19,6 @@ return require('packer').startup(function(use)
     use('folke/tokyonight.nvim')
     use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' })
 
-    -- undo
-    use('mbbill/undotree')
-
-    -- git
-    use('tpope/vim-fugitive')
 
     -- language server
     use {
@@ -59,21 +54,20 @@ return require('packer').startup(function(use)
             require('Comment').setup()
         end
     }
-    use 'JoosepAlviste/nvim-ts-context-commentstring'
 
     -- icons
     use 'kyazdani42/nvim-web-devicons'
 
-    -- folder/file tree
-    use {
-        'nvim-tree/nvim-tree.lua',
-        requires = {
-            'nvim-tree/nvim-web-devicons', -- optional
-        },
-        config = function()
-            require("nvim-tree").setup {}
-        end
-    }
+    -- -- folder/file tree
+    -- use {
+    --     'nvim-tree/nvim-tree.lua',
+    --     requires = {
+    --         'nvim-tree/nvim-web-devicons', -- optional
+    --     },
+    --     config = function()
+    --         require("nvim-tree").setup {}
+    --     end
+    -- }
 
     -- autoforattting of pairs / brackets
     use {
@@ -85,4 +79,8 @@ return require('packer').startup(function(use)
         'nvim-lualine/lualine.nvim',
         requires = { 'nvim-tree/nvim-web-devicons', opt = true }
     }
+
+    -- harpoon
+    use 'nvim-lua/plenary.nvim'
+    use 'ThePrimeagen/harpoon'
 end)
