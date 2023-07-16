@@ -9,3 +9,5 @@
 3. install the windows compatible version
 4. go to Windows Terminal -> settings -> <profile> -> appareance -> font face
 5. restart terminal tab/window
+
+I use BlexMono Nerd Font
