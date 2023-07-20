@@ -4,6 +4,12 @@ lsp.preset("recommended")
 lsp.ensure_installed({
     'pyright',
     'lua_ls',
+    'gopls',
+    'gofumpt',
+    'goimports',
+    'jsonls',
+    'prettierd'
+
 })
 
 -- Fix Undefined global 'vim'
@@ -40,7 +46,7 @@ lsp.format_on_save({
     servers = {
         ['lua_ls'] = { 'lua' },
         ['null-ls'] = { 'python', "javascript", "javascriptreact", "typescript", "typescriptreact", "vue", "css", "scss",
-            "less", "html", "json", "jsonc", "yaml", "markdown", "markdown.mdx", "graphql", "handlebars" },
+            "less", "html", "json", "jsonc", "yaml", "markdown", "markdown.mdx", "graphql", "handlebars", "go" },
     }
 })
 
@@ -77,6 +83,9 @@ null_ls.setup {
         null_ls.builtins.formatting.prettierd,
         null_ls.builtins.formatting.black, --.with({ extra_args = { "--config pyproject.toml" } }),
         null_ls.builtins.formatting.isort, --.with({ extra_args = { "--sp pyproject.toml --gitignore" } }),
-        null_ls.builtins.diagnostics.ruff
+        null_ls.builtins.diagnostics.ruff,
+
+        null_ls.builtins.formatting.gofumpt,
+        null_ls.builtins.formatting.goimports
     }
 }
