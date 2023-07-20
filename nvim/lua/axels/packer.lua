@@ -58,16 +58,16 @@ return require('packer').startup(function(use)
     -- icons
     use 'kyazdani42/nvim-web-devicons'
 
-    -- -- folder/file tree
-    -- use {
-    --     'nvim-tree/nvim-tree.lua',
-    --     requires = {
-    --         'nvim-tree/nvim-web-devicons', -- optional
-    --     },
-    --     config = function()
-    --         require("nvim-tree").setup {}
-    --     end
-    -- }
+    -- folder/file tree
+    use {
+        'nvim-tree/nvim-tree.lua',
+        requires = {
+            'nvim-tree/nvim-web-devicons', -- optional
+        },
+        config = function()
+            require("nvim-tree").setup {}
+        end
+    }
 
     -- autoforattting of pairs / brackets
     use {
