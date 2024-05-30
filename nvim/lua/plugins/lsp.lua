@@ -56,9 +56,8 @@ return {
 			"tailwindcss",
 			"lua_ls",
 			-- "json-lsp",
-			-- "html-lsp",
-			-- "htmx-lsp",
 			"rust_analyzer",
+			"templ",
 		}
 
 		mason_lspconfig.setup({
@@ -75,8 +74,39 @@ return {
 				"isort", -- python formatter
 				"black", -- python formatter
 				"ruff", -- python linter
+				"html",
+				"templ",
 				-- "eslint_d", -- js linter
 			},
+		})
+
+		local lspconfig = require("lspconfig")
+
+		lspconfig.html.setup({
+			on_attach = on_attach,
+			capabilities = capabilities,
+			filetypes = { "html", "templ" },
+		})
+
+		-- lspconfig.htmx.setup({
+		-- 	on_attach = on_attach,
+		-- 	capabilities = capabilities,
+		-- 	filetypes = { "html", "templ" },
+		-- })
+
+		lspconfig.tailwindcss.setup({
+			on_attach = on_attach,
+			capabilities = capabilities,
+			filetypes = { "templ", "astro", "javascript", "typescript", "react" },
+			init_options = { userLanguages = { templ = "html" } },
+		})
+
+		vim.filetype.add({ extension = { templ = "templ" } })
+
+		lspconfig.gopls.setup({
+			on_attach = on_attach,
+			capabilities = capabilities,
+			cmd_env = { GOFLAGS = "-tags=integration,integration_external,!integration,e2e" },
 		})
 
 		lsp_zero.setup_servers(lang_servers)
@@ -96,6 +126,13 @@ return {
 				["<S-Tab>"] = cmp.mapping.select_prev_item(cmp_select),
 				["<Tab>"] = cmp.mapping.select_next_item(cmp_select),
 			}),
+		})
+
+		cmp.setup.filetype({ "sql" }, {
+			sources = {
+				{ name = "vim-dadbod-completion" },
+				{ name = "buffer" },
+			},
 		})
 	end,
 }

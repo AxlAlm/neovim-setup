@@ -4,6 +4,7 @@ return {
 	event = { "BufReadPre", "BufNewFile" }, -- to disable, comment this out
 	config = function()
 		local conform = require("conform")
+
 		conform.setup({
 			formatters_by_ft = {
 				javascript = { "prettierd" },
@@ -15,7 +16,8 @@ return {
 				markdown = { "prettierd" },
 				lua = { "stylua" },
 				python = { "isort", "black" },
-				golang = { "gopls", "goimports", "golines" },
+				go = { "gopls", "goimports", "golines" },
+				templ = { "templ", "prettierd" },
 			},
 			format_on_save = {
 				lsp_fallback = true,
@@ -23,5 +25,9 @@ return {
 				timeout_ms = 1000,
 			},
 		})
+
+		vim.keymap.set("", "<leader>f", function()
+			require("conform").format({ async = true, lsp_fallback = true })
+		end)
 	end,
 }

@@ -21,6 +21,7 @@ return {
 				"bash",
 				"tsx",
 				"css",
+				"templ",
 			},
 
 			sync_install = false,
