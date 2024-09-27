@@ -1,6 +1,6 @@
 return {
 	"VonHeikemen/lsp-zero.nvim",
-	branch = "v3.x",
+	branch = "v4.x",
 	dependencies = {
 		"neovim/nvim-lspconfig",
 		"hrsh7th/cmp-nvim-lsp",
@@ -50,12 +50,11 @@ return {
 		local lang_servers = {
 			"pyright",
 			"gopls",
-			"tsserver",
+			"ts_ls",
 			"html",
 			"cssls",
 			"tailwindcss",
 			"lua_ls",
-			-- "json-lsp",
 			"rust_analyzer",
 			"templ",
 		}
@@ -76,7 +75,6 @@ return {
 				"ruff", -- python linter
 				"html",
 				"templ",
-				-- "eslint_d", -- js linter
 			},
 		})
 
@@ -87,12 +85,6 @@ return {
 			capabilities = capabilities,
 			filetypes = { "html", "templ" },
 		})
-
-		-- lspconfig.htmx.setup({
-		-- 	on_attach = on_attach,
-		-- 	capabilities = capabilities,
-		-- 	filetypes = { "html", "templ" },
-		-- })
 
 		lspconfig.tailwindcss.setup({
 			on_attach = on_attach,
