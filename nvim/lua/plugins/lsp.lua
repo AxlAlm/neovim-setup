@@ -1,6 +1,6 @@
 return {
 	"VonHeikemen/lsp-zero.nvim",
-	branch = "v4.x",
+	branch = "v3.x",
 	dependencies = {
 		"neovim/nvim-lspconfig",
 		"hrsh7th/cmp-nvim-lsp",
@@ -110,6 +110,7 @@ return {
 				{ name = "path" },
 				{ name = "nvim_lsp" },
 				{ name = "nvim_lua" },
+				{ name = "luasnip" },
 			},
 			formatting = lsp_zero.cmp_format(),
 			mapping = cmp.mapping.preset.insert({
