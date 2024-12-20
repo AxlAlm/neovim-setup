@@ -31,6 +31,10 @@ return {
 			vim.keymap.set("n", "<leader>d", function()
 				vim.diagnostic.open_float()
 			end, opts)
+
+			vim.keymap.set("n", "<leader>dn", function()
+				vim.diagnostic.goto_next()
+			end, opts)
 		end)
 
 		local mason = require("mason")
