@@ -30,11 +30,5 @@ return {
 		keymap.set("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
 		keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
 		keymap.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
-
-		-- vim.keymap.set('n', '<leader>pf', builtin.find_files, {})
-		-- vim.keymap.set('n', '<C-p>', builtin.git_files, {})
-		-- vim.keymap.set('n', '<leader>ps', function()
-		--     builtin.grep_string({ search = vim.fn.input("Grep > ") });
-		-- end)
 	end,
 }

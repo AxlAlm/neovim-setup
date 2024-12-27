@@ -4,16 +4,13 @@ vim.g.mapleader = " "
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
--- -- toggle tree
-vim.keymap.set("n", "<leader>å", ":NvimTreeToggle<cr>")
-
-vim.g.copilot_no_tab_map = true
-vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+-- close all tabs
+vim.keymap.set("n", "<leader>to", ":tabclose<CR>", { desc = "Close all tabs" })
 
 function RenameFile(old_name, new_name)
-	current_dir = vim.fn.expand("%:p:h")
-	old_path = current_dir .. "/" .. old_name
-	new_path = current_dir .. "/" .. new_name
+	local current_dir = vim.fn.expand("%:p:h")
+	local old_path = current_dir .. "/" .. old_name
+	local new_path = current_dir .. "/" .. new_name
 	local success, err = os.rename(old_path, new_path)
 	if success then
 		print("File renamed successfully to " .. new_name)
