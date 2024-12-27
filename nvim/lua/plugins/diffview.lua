@@ -1,57 +1,33 @@
--- return {
--- 	"sindrets/diffview.nvim",
--- 	dependencies = { "nvim-lua/plenary.nvim" },
--- 	keys = {
--- 		-- Open current file history in vertical split
--- 		{ "<leader>hf", "<cmd>DiffviewFileHistory %<cr>", desc = "File history" },
--- 	},
--- 	opts = {
--- 		view = {
--- 			default = {
--- 				layout = "diff2_horizontal", -- or "diff2_vertical" if you prefer
--- 				winbar_info = false, -- Cleaner interface
--- 			},
--- 		},
--- 		keymaps = {
--- 			file_history_panel = {
--- 				-- Navigate through file history
--- 				["J"] = "<cmd>lua require('diffview.actions').select_next_entry()<CR>",
--- 				["K"] = "<cmd>lua require('diffview.actions').select_prev_entry()<CR>",
--- 				["q"] = "<cmd>lua require('diffview.actions').close()<CR>",
--- 			},
--- 		},
--- 	},
--- }
---
 return {
-	-- "sindrets/diffview.nvim",
-	-- dependencies = { "nvim-lua/plenary.nvim" },
-	-- keys = {
-	-- 	-- Open file history in a single view
-	-- 	{ "<leader>hf", "<cmd>DiffviewFileHistory %<cr>", desc = "Browse file history" },
-	-- 	-- View diff of current file against HEAD
-	-- 	{ "<leader>gd", "<cmd>DiffviewOpen HEAD -- % -uno<cr>", desc = "View current file diff" },
-	-- },
-	-- opts = {
-	-- 	view = {
-	-- 		default = {
-	-- 			layout = "diff2_horizontal",
-	-- 			winbar_info = false,
-	-- 		},
-	-- 		file_history = {
-	-- 			layout = "default", -- This gives you just the history view initially
-	-- 		},
-	-- 	},
-	-- 	keymaps = {
-	-- 		view = {
-	-- 			-- When in diff view, cycle through commits
-	-- 			["[c"] = "<cmd>lua require('diffview.actions').prev_entry()<CR>",
-	-- 			["]c"] = "<cmd>lua require('diffview.actions').next_entry()<CR>",
-	-- 		},
-	-- 		file_history_panel = {
-	-- 			["<cr>"] = "<cmd>lua require('diffview.actions').select_entry()<CR>", -- Select commit to diff
-	-- 			["q"] = "<cmd>lua require('diffview.actions').close()<CR>",
-	-- 		},
-	-- 	},
-	-- },
+	"sindrets/diffview.nvim",
+	dependencies = { "nvim-lua/plenary.nvim" },
+	keys = {
+		-- Open current file history in vertical split
+		{ "<leader>fh", "<cmd>DiffviewFileHistory %<cr>", desc = "File history" },
+	},
+	opts = {
+		view = {
+			default = {
+				layout = "diff2_horizontal", -- or "diff2_vertical" if you prefer
+				winbar_info = false, -- Cleaner interface
+			},
+		},
+		file_history_panel = {
+			win_config = { -- See |diffview-config-win_config|
+				height = 6,
+			},
+		},
+		keymaps = {
+			view = {
+				["J"] = "<cmd>lua require('diffview.actions').select_next_entry()<CR>",
+				["K"] = "<cmd>lua require('diffview.actions').select_prev_entry()<CR>",
+			},
+			file_history_panel = {
+				-- Navigate through file history
+				["J"] = "<cmd>lua require('diffview.actions').select_next_entry()<CR>",
+				["K"] = "<cmd>lua require('diffview.actions').select_prev_entry()<CR>",
+				["q"] = "<cmd>lua require('diffview.actions').close()<CR>",
+			},
+		},
+	},
 }
