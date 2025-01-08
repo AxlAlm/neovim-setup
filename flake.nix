@@ -63,6 +63,7 @@
           homeDirectory = if pkgs.stdenv.isDarwin
             then "/Users/axl"  # Change this
             else "/home/axl";  # Change this
+
           
           packages = commonPackages pkgs;
           
@@ -91,7 +92,8 @@
             viAlias = true;
             vimAlias = true;
             vimdiffAlias = true;
-            extraLuaConfig = lib.fileContents neovim/init.lua;
+            # extraLuaConfig = lib.fileContents neovim/init.lua;
+            extraLuaConfig = builtins.readFile ./neovim/init.lua;
             extraPackages = [
               pkgs.gcc
               pkgs.lua-language-server
@@ -112,14 +114,14 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.axlalm = homeConfig;  
+              users.axl = homeConfig;  
             };
           }
         ];
       };
 
       # Linux home-manager configuration
-      homeConfigurations."axlalm@linux" = home-manager.lib.homeManagerConfiguration {  
+      homeConfigurations."inux" = home-manager.lib.homeManagerConfiguration {  
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         modules = [ homeConfig ];
       };
