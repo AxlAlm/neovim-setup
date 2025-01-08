@@ -61,9 +61,8 @@
         home = {
           username = "axl";  # Change this
           homeDirectory = if pkgs.stdenv.isDarwin
-            then "/Users/axl"  # Change this
-            else "/home/axl";  # Change this
-
+            then lib.mkForce (toString /Users/axl) 
+            else lib.mkForce (toString /home/axl) /home/axl;
           
           packages = commonPackages pkgs;
           
