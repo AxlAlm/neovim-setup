@@ -49,6 +49,21 @@
         # System configuration
         programs.zsh.enable = true;
         nixpkgs.hostPlatform = "x86_64-darwin";
+
+
+        # Configure PATH to only include Nix paths
+        environment.systemPath = [
+            "/run/current-system/sw/bin"
+            "/nix/var/nix/profiles/default/bin"
+        ];
+
+        # Add shell configuration to explicitly set PATH
+        programs.zsh.shellInit = ''
+            # Clear existing PATH
+            export PATH=""
+            # Add only Nix paths
+            export PATH=/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH
+        '';
         
         # System packages
         environment.systemPackages = commonPackages pkgs ++ [
@@ -83,7 +98,13 @@
         programs.zsh = {
           enable = true;
           initExtra = ''
-            # Your custom zsh configuration here
+            # Prevent accidental Homebrew usage
+            brew() {
+              echo "Homebrew is disabled. Using Nix instead."
+              return 1
+            }
+            
+            # Your other zsh configurations...
           '';
         };
 
@@ -93,7 +114,7 @@
             viAlias = true;
             vimAlias = true;
             vimdiffAlias = true;
-            extraLuaConfig = lib.fileContents nvim/init.lua;
+            extraLuaConfig = lib.fileContents ./nvim/init.lua;
             extraPackages = [
               pkgs.gcc
               pkgs.lua-language-server
