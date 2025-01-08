@@ -1,6 +1,5 @@
 {
   description = "Multi-platform development environment";
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     
@@ -16,7 +15,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-
   outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, ... }:
     let
       # System settings
@@ -25,7 +23,6 @@
         nix.settings.experimental-features = [ "nix-command" "flakes" ];
         services.nix-daemon.enable = true;
       };
-
       # Common packages for both platforms
       commonPackages = pkgs: with pkgs; [
         # Development tools
@@ -40,7 +37,6 @@
         curl
         wget
       ];
-
       # Darwin-specific configuration
       darwinConfig = { pkgs, ... }: {
         inherit (systemSettings) system nix;
@@ -49,30 +45,18 @@
         # System configuration
         programs.zsh.enable = true;
         nixpkgs.hostPlatform = "x86_64-darwin";
-
-
         # Configure PATH to only include Nix paths
         environment.systemPath = [
             "/run/current-system/sw/bin"
             "/nix/var/nix/profiles/default/bin"
         ];
-
-        # Add shell configuration to explicitly set PATH
-        programs.zsh.shellInit = ''
-            # Clear existing PATH
-            export PATH=""
-            # Add only Nix paths
-            export PATH=/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH
-        '';
         
         # System packages
         environment.systemPackages = commonPackages pkgs ++ [
+          pkgs.darwin-rebuild  # Changed from pkgs.darwin.darwin-rebuild
         ];
       };
-
-
-      lib = nixpkgs.lib;  # Add this line
-
+      lib = nixpkgs.lib;
       # Home-manager common configuration
       homeConfig = { pkgs, lib,... }: {
         home = {
@@ -83,18 +67,9 @@
           
           packages = commonPackages pkgs;
           
-          # Don't change this unless you know what you're doing
           stateVersion = "23.11";
         };
-
-        # # Git configuration
-        # programs.git = {
-        #   enable = true;
-        #   userName = "Your Name";  # Change this
-        #   userEmail = "your.email@example.com";  # Change this
-        # };
-
-        # Shell configuration
+        
         programs.zsh = {
           enable = true;
           initExtra = ''
@@ -103,11 +78,8 @@
               echo "Homebrew is disabled. Using Nix instead."
               return 1
             }
-            
-            # Your other zsh configurations...
           '';
         };
-
         programs.neovim = {
             enable = true;
             defaultEditor = true;
@@ -120,9 +92,7 @@
               pkgs.lua-language-server
             ];
           };
-
       };
-
     in
     {
       # Darwin configuration
@@ -136,12 +106,11 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               users.axelalmquist = homeConfig;  
-              backupFileExtension = "backup";  # Add this line
+              backupFileExtension = "backup";
             };
           }
         ];
       };
-
       # Linux home-manager configuration
       homeConfigurations."linux" = home-manager.lib.homeManagerConfiguration {  
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
