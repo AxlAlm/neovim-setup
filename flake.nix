@@ -59,18 +59,9 @@
         # Set zsh as default shell
         users.users.axelalmquist.shell = pkgs.zsh;
         nixpkgs.hostPlatform = "x86_64-darwin";
-
-        # Configure PATH to include all necessary Nix paths
-        environment.systemPath = [
-            "/run/current-system/sw/bin"
-            "/nix/var/nix/profiles/default/bin"
-            "/etc/profiles/per-user/$USER/bin"
-            "/run/wrappers/bin"
-            "/opt/homebrew/bin"  # Keep Homebrew as last
-        ];
-
-        # # Ensure nix-darwin tools are available
-        # environment.pathsToLink = [ "/Applications" "/Applications/Utilities" "/Developer" "/Library" "/usr/bin" "/usr/sbin" ];
+        
+        # fingerprint
+        # security.pam.enableSudoTouchIdAuth = true;
 
         # # System packages
         environment.systemPackages = commonPackages pkgs;
