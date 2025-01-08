@@ -29,6 +29,15 @@
         git
         gnumake
         cmake
+
+        # Zsh plugins
+        zsh-autosuggestions
+        zsh-syntax-highlighting
+        
+        # Golang
+        go
+        gopls       # Go language server
+        golangci-lint
         
         # Utils
         ripgrep
@@ -76,9 +85,32 @@
           stateVersion = "23.11";
         };
         
+
         programs.zsh = {
           enable = true;
-          initExtra = ''
+          enableCompletion = true;
+          syntaxHighlighting.enable = true;
+          autosuggestion.enable = true;
+
+          
+          oh-my-zsh = {
+            enable = true;
+            plugins = [
+              "git"
+              "docker"
+              "kubectl"
+              "history"
+              "sudo"
+            ];
+            theme = "fino";
+          };
+          
+          initExtraFirst = ''
+            # Source user's .zshrc if it exists
+            if [ -f ~/.zshrc ]; then
+              source ~/.zshrc
+            fi
+            
             # Ensure Nix paths take precedence
             export PATH="/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/etc/profiles/per-user/$USER/bin:$PATH"
             
@@ -87,17 +119,20 @@
               export PATH="/nix/var/nix/profiles/default/bin:$PATH"
             fi
             
-            # Prevent accidental Homebrew usage
-            brew() {
-              echo "Homebrew is disabled. Using Nix instead."
-              return 1
-            }
+            # Go configuration
+            export GOPATH="$HOME/go"
+            export PATH="$GOPATH/bin:$PATH"
             
-            # Ensure we use Nix's neovim
-            alias vim="$(which nvim)"
-            alias vi="$(which nvim)"
+            # Create Go workspace directory if it doesn't exist
+            if [ ! -d "$GOPATH" ]; then
+              mkdir -p "$GOPATH"
+              mkdir -p "$GOPATH/src"
+              mkdir -p "$GOPATH/bin"
+              mkdir -p "$GOPATH/pkg"
+            fi
           '';
         };
+
         programs.neovim = {
             enable = true;
             defaultEditor = true;
