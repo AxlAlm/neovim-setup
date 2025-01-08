@@ -30,7 +30,6 @@
       commonPackages = pkgs: with pkgs; [
         # Development tools
         git
-        neovim
         gnumake
         cmake
         
@@ -56,13 +55,16 @@
         ];
       };
 
+
+      lib = nixpkgs.lib;  # Add this line
+
       # Home-manager common configuration
-      homeConfig = { pkgs, ... }: {
+      homeConfig = { pkgs, lib,... }: {
         home = {
-          username = "axl";  # Change this
+          username = "axelalmquist";  
           homeDirectory = if pkgs.stdenv.isDarwin
-            then lib.mkForce (toString /Users/axl) 
-            else lib.mkForce (toString /home/axl) /home/axl;
+            then lib.mkForce (toString /Users/axelalmquist) 
+            else lib.mkForce (toString /home/axl);
           
           packages = commonPackages pkgs;
           
@@ -91,8 +93,7 @@
             viAlias = true;
             vimAlias = true;
             vimdiffAlias = true;
-            # extraLuaConfig = lib.fileContents neovim/init.lua;
-            extraLuaConfig = builtins.readFile ./neovim/init.lua;
+            extraLuaConfig = lib.fileContents nvim/init.lua;
             extraPackages = [
               pkgs.gcc
               pkgs.lua-language-server
@@ -113,14 +114,15 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.axl = homeConfig;  
+              users.axelalmquist = homeConfig;  
+              backupFileExtension = "backup";  # Add this line
             };
           }
         ];
       };
 
       # Linux home-manager configuration
-      homeConfigurations."inux" = home-manager.lib.homeManagerConfiguration {  
+      homeConfigurations."linux" = home-manager.lib.homeManagerConfiguration {  
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         modules = [ homeConfig ];
       };
