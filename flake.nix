@@ -22,19 +22,26 @@
         system.stateVersion = 4;
         nix.settings.experimental-features = [ "nix-command" "flakes" ];
         services.nix-daemon.enable = true;
+        # Add shell configuration
+        programs.zsh = {
+            enable = true;
+            promptInit = ""; # Clear the prompt init to avoid conflicts
+        };
+
       };
+
       # Common packages for both platforms
       commonPackages = pkgs: with pkgs; [
         # Development tools
         git
         gnumake
         cmake
-
+        
         # Zsh plugins
         zsh-autosuggestions
         zsh-syntax-highlighting
         
-        # Golang
+        # Go development
         go
         gopls       # Go language server
         golangci-lint
@@ -46,6 +53,7 @@
         curl
         wget
       ];
+
       # Darwin-specific configuration
       darwinConfig = { pkgs, ... }: {
         inherit (systemSettings) system nix;
@@ -53,24 +61,28 @@
         
         # System configuration
         programs.zsh.enable = true;
+
+        # Set zsh as default shell
+        users.users.axelalmquist.shell = pkgs.zsh;
         nixpkgs.hostPlatform = "x86_64-darwin";
+
         # Configure PATH to include all necessary Nix paths
         environment.systemPath = [
             "/run/current-system/sw/bin"
             "/nix/var/nix/profiles/default/bin"
             "/etc/profiles/per-user/$USER/bin"
             "/run/wrappers/bin"
-            "/run/current-system/sw/bin"
-            "/nix/var/nix/profiles/default/bin"
-            "/opt/homebrew/bin"  # Keep Homebrew as fallback
+            "/opt/homebrew/bin"  # Keep Homebrew as last
         ];
         
-        # Ensure nix-darwin tools are available
-        environment.pathsToLink = [ "/Applications" "/Applications/Utilities" "/Developer" "/Library" "/usr/bin" "/usr/sbin" ];
-        
-        # System packages
-        environment.systemPackages = commonPackages pkgs;
+        # # Ensure nix-darwin tools are available
+        # environment.pathsToLink = [ "/Applications" "/Applications/Utilities" "/Developer" "/Library" "/usr/bin" "/usr/sbin" ];
+        # 
+        # # System packages
+        # environment.systemPackages = commonPackages pkgs;
       };
+
+
       lib = nixpkgs.lib;
       # Home-manager common configuration
       homeConfig = { pkgs, lib,... }: {
@@ -85,13 +97,11 @@
           stateVersion = "23.11";
         };
         
-
         programs.zsh = {
           enable = true;
           enableCompletion = true;
           syntaxHighlighting.enable = true;
           autosuggestion.enable = true;
-
           
           oh-my-zsh = {
             enable = true;
@@ -105,31 +115,10 @@
             theme = "fino";
           };
           
-          initExtraFirst = ''
-            # Source user's .zshrc if it exists
-            if [ -f ~/.zshrc ]; then
-              source ~/.zshrc
-            fi
-            
-            # Ensure Nix paths take precedence
-            export PATH="/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/etc/profiles/per-user/$USER/bin:$PATH"
-            
-            # Add darwin-rebuild to PATH
-            if [ -e '/nix/var/nix/profiles/default/bin/darwin-rebuild' ]; then
-              export PATH="/nix/var/nix/profiles/default/bin:$PATH"
-            fi
-            
+          initExtra = ''
             # Go configuration
             export GOPATH="$HOME/go"
             export PATH="$GOPATH/bin:$PATH"
-            
-            # Create Go workspace directory if it doesn't exist
-            if [ ! -d "$GOPATH" ]; then
-              mkdir -p "$GOPATH"
-              mkdir -p "$GOPATH/src"
-              mkdir -p "$GOPATH/bin"
-              mkdir -p "$GOPATH/pkg"
-            fi
           '';
         };
 
