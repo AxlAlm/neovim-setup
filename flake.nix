@@ -45,16 +45,22 @@
         # System configuration
         programs.zsh.enable = true;
         nixpkgs.hostPlatform = "x86_64-darwin";
-        # Configure PATH to only include Nix paths
+        # Configure PATH to include all necessary Nix paths
         environment.systemPath = [
             "/run/current-system/sw/bin"
             "/nix/var/nix/profiles/default/bin"
+            "/etc/profiles/per-user/$USER/bin"
+            "/run/wrappers/bin"
+            "/run/current-system/sw/bin"
+            "/nix/var/nix/profiles/default/bin"
+            "/opt/homebrew/bin"  # Keep Homebrew as fallback
         ];
         
+        # Ensure nix-darwin tools are available
+        environment.pathsToLink = [ "/Applications" "/Applications/Utilities" "/Developer" "/Library" "/usr/bin" "/usr/sbin" ];
+        
         # System packages
-        environment.systemPackages = commonPackages pkgs ++ [
-          pkgs.darwin-rebuild  # Changed from pkgs.darwin.darwin-rebuild
-        ];
+        environment.systemPackages = commonPackages pkgs;
       };
       lib = nixpkgs.lib;
       # Home-manager common configuration
@@ -73,11 +79,23 @@
         programs.zsh = {
           enable = true;
           initExtra = ''
+            # Ensure Nix paths take precedence
+            export PATH="/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/etc/profiles/per-user/$USER/bin:$PATH"
+            
+            # Add darwin-rebuild to PATH
+            if [ -e '/nix/var/nix/profiles/default/bin/darwin-rebuild' ]; then
+              export PATH="/nix/var/nix/profiles/default/bin:$PATH"
+            fi
+            
             # Prevent accidental Homebrew usage
             brew() {
               echo "Homebrew is disabled. Using Nix instead."
               return 1
             }
+            
+            # Ensure we use Nix's neovim
+            alias vim="$(which nvim)"
+            alias vi="$(which nvim)"
           '';
         };
         programs.neovim = {
