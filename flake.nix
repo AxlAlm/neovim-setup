@@ -22,12 +22,6 @@
         system.stateVersion = 4;
         nix.settings.experimental-features = [ "nix-command" "flakes" ];
         services.nix-daemon.enable = true;
-        # Add shell configuration
-        programs.zsh = {
-            enable = true;
-            promptInit = ""; # Clear the prompt init to avoid conflicts
-        };
-
       };
 
       # Common packages for both platforms
@@ -74,12 +68,12 @@
             "/run/wrappers/bin"
             "/opt/homebrew/bin"  # Keep Homebrew as last
         ];
-        
+
         # # Ensure nix-darwin tools are available
         # environment.pathsToLink = [ "/Applications" "/Applications/Utilities" "/Developer" "/Library" "/usr/bin" "/usr/sbin" ];
-        # 
+
         # # System packages
-        # environment.systemPackages = commonPackages pkgs;
+        environment.systemPackages = commonPackages pkgs;
       };
 
 
@@ -114,6 +108,11 @@
             ];
             theme = "fino";
           };
+
+          initExtraFirst = ''
+            # Ensure nix paths are first in PATH
+            export PATH="/etc/profiles/per-user/axelalmquist/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:$PATH"
+          '';
           
           initExtra = ''
             # Go configuration
