@@ -42,8 +42,8 @@
         golangci-lint
 
         ## 
-        nodejs-slim_23
-        typescript
+        # nodejs-slim_23
+        # typescript
         
         # Utils
         ripgrep
@@ -126,7 +126,8 @@
             extraLuaConfig = lib.fileContents ./nvim/init.lua;
             extraPackages = [
               pkgs.gcc
-              pkgs.lua-language-server
+              # pkgs.lua-language-server
+              pkgs.tree-sitter
             ];
           };
       };
