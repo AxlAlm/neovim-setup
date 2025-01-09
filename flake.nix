@@ -30,6 +30,7 @@
         git
         gnumake
         cmake
+        lua
         
         # Zsh plugins
         zsh-autosuggestions
