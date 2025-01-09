@@ -41,7 +41,7 @@
         golangci-lint
 
         ## 
-        node
+        nodejs_23
         typescript
         
         # Utils
