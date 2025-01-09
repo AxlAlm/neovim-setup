@@ -30,16 +30,16 @@
         git
         gnumake
         cmake
-        lua
+        # lua
         
         # Zsh plugins
         zsh-autosuggestions
         zsh-syntax-highlighting
         
         # Go development
-        go
-        gopls       # Go language server
-        golangci-lint
+        # go
+        # gopls       # Go language server
+        # golangci-lint
 
         ## 
         # nodejs-slim_23
@@ -127,7 +127,6 @@
             extraPackages = [
               pkgs.gcc
               # pkgs.lua-language-server
-              pkgs.tree-sitter
             ];
           };
       };
