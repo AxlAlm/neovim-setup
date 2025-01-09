@@ -39,6 +39,9 @@
         go
         gopls       # Go language server
         golangci-lint
+
+        ## 
+        typescript
         
         # Utils
         ripgrep
