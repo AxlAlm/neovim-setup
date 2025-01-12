@@ -16,6 +16,7 @@ return {
 					".git/",
 					".cache",
 					".aws",
+					"vendor",
 				},
 			},
 			pickers = {
