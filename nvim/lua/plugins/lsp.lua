@@ -40,7 +40,6 @@ return {
 				"lua_ls",
 				"rust_analyzer",
 				"templ",
-				"phpactor",
 			}
 
 			-- Setup mason-lspconfig
@@ -61,7 +60,6 @@ return {
 					"ruff",
 					"html",
 					"templ",
-					"php-cs-fixer",
 				},
 			})
 
