@@ -6,8 +6,91 @@ return {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
+			"stevearc/conform.nvim",
 		},
 		config = function()
+			local language_configs = {
+				lua = {
+					server = "lua_ls",
+					formatters = { "stylua" },
+					linters = {},
+					server_config = {
+						settings = {
+							Lua = {
+								diagnostics = {
+									globals = { "vim" },
+								},
+							},
+						},
+					},
+				},
+
+				go = {
+					server = "gopls",
+					formatters = { "goimports", "golines" },
+					linters = {},
+					server_config = {
+						cmd_env = { GOFLAGS = "-tags=integration,e2e,wireinject" },
+					},
+					additional_servers = { "templ" },
+				},
+
+				-- also for javascript
+				typescript = {
+					server = "ts_ls",
+					formatters = { "prettierd" },
+					linters = {},
+					server_config = {},
+					additional_servers = { "html", "cssls", "tailwindcss" },
+				},
+
+				python = {
+					server = "pyright",
+					formatters = { "isort", "black" },
+					linters = { "ruff" },
+					server_config = {},
+				},
+
+				rust = {
+					server = "rust_analyzer",
+					formatters = {},
+					linters = {},
+					server_config = {},
+				},
+			}
+
+			local servers_to_install = {}
+			local tools_to_install = {}
+			for _, config in pairs(language_configs) do
+				table.insert(servers_to_install, config.server)
+
+				if config.additional_servers then
+					for _, server in ipairs(config.additional_servers) do
+						table.insert(servers_to_install, server)
+					end
+				end
+
+				for _, formatter in ipairs(config.formatters) do
+					table.insert(tools_to_install, formatter)
+				end
+
+				for _, linter in ipairs(config.linters) do
+					table.insert(tools_to_install, linter)
+				end
+			end
+
+			-- Server-specific configurations (outside of language configs)
+			local special_server_configs = {
+				html = {
+					filetypes = { "html", "templ" },
+				},
+				tailwindcss = {
+					filetypes = { "templ", "javascript", "typescript" },
+					init_options = { userLanguages = { templ = "html" } },
+				},
+			}
+
+			-- Setup on_attach function (assuming it's defined elsewhere)
 			local on_attach = function(_, bufnr)
 				local opts = { buffer = bufnr, remap = false }
 				vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
@@ -30,68 +113,66 @@ return {
 				},
 			})
 
-			local servers = {
-				"pyright",
-				"gopls",
-				"ts_ls",
-				"html",
-				"cssls",
-				"tailwindcss",
-				"lua_ls",
-				"rust_analyzer",
-				"templ",
-			}
-
-			-- Setup mason-lspconfig
 			require("mason-lspconfig").setup({
-				ensure_installed = servers,
+				ensure_installed = servers_to_install,
 				automatic_installation = true,
 			})
 
-			-- Setup mason-tool-installer
 			require("mason-tool-installer").setup({
-				ensure_installed = {
-					"goimports",
-					"golines",
-					"prettierd",
-					"stylua",
-					"isort",
-					"black",
-					"ruff",
-					"html",
-					"templ",
-				},
+				ensure_installed = tools_to_install,
 			})
 
-			-- Configure LSP servers
 			local lspconfig = require("lspconfig")
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-			-- Default configuration for all servers
 			local default_config = {
 				on_attach = on_attach,
 				capabilities = capabilities,
 			}
 
-			-- Server-specific configurations
-			local server_configs = {
-				html = {
-					filetypes = { "html", "templ" },
-				},
-				tailwindcss = {
-					filetypes = { "templ", "javascript", "typescript" },
-					init_options = { userLanguages = { templ = "html" } },
-				},
-				gopls = {
-					cmd_env = { GOFLAGS = "-tags=integration,integration_external,e2e,wireinject" },
-				},
-			}
+			-- Setup all language servers
+			for _, config in pairs(language_configs) do
+				-- Setup main server for the language
+				local server_config = vim.tbl_deep_extend(
+					"force",
+					default_config,
+					config.server_config or {},
+					special_server_configs[config.server] or {}
+				)
+				lspconfig[config.server].setup(server_config)
 
-			-- Setup servers
-			for _, server in ipairs(servers) do
-				local config = vim.tbl_deep_extend("force", default_config, server_configs[server] or {})
-				lspconfig[server].setup(config)
+				-- Setup additional servers if any
+				if config.additional_servers then
+					for _, server in ipairs(config.additional_servers) do
+						local additional_config =
+							vim.tbl_deep_extend("force", default_config, special_server_configs[server] or {})
+						lspconfig[server].setup(additional_config)
+					end
+				end
 			end
+
+			local conform = require("conform")
+
+			conform.setup({
+				formatters_by_ft = {
+					javascript = { "prettierd" },
+					typescript = { "prettierd" },
+					css = { "prettierd" },
+					html = { "prettierd" },
+					json = { "prettierd" },
+					yaml = { "prettierd" },
+					markdown = { "prettierd" },
+					lua = { "stylua" },
+					python = { "isort", "black" },
+					go = { "gopls", "goimports", "golines" },
+					templ = { "templ", "prettierd" },
+				},
+				format_on_save = {
+					lsp_fallback = true,
+					async = false,
+					timeout_ms = 1000,
+				},
+			})
 
 			-- Add filetype for templ
 			vim.filetype.add({ extension = { templ = "templ" } })
