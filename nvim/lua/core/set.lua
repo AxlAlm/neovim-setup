@@ -23,3 +23,7 @@ vim.opt.termguicolors = true
 vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
+
+-- spell checking
+vim.opt.spell = true
+vim.opt.spelllang = "en_us"
