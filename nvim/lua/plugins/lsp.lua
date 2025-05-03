@@ -44,6 +44,13 @@ return {
 					additional_servers = { "html", "cssls", "tailwindcss" },
 				},
 
+				svelte = {
+					server = "svelte",
+					formatters = { "prettierd" },
+					linters = {},
+					server_config = {},
+				},
+
 				python = {
 					server = "pyright",
 					formatters = { "isort", "black" },
@@ -51,11 +58,45 @@ return {
 					server_config = {},
 				},
 
+				elixir = {
+					server = "elixirls",
+					formatters = {},
+					linters = {},
+					server_config = {
+						cmd = { vim.fn.expand("$HOME/.local/share/nvim/mason/bin/elixir-ls") },
+					},
+				},
+
+				php = {
+					server = "intelephense",
+					formatters = { "pint" },
+					linters = {},
+					server_config = {},
+				},
+
 				rust = {
 					server = "rust_analyzer",
 					formatters = {},
 					linters = {},
-					server_config = {},
+					server_config = {
+						settings = {
+							["rust-analyzer"] = {
+								cargo = {
+									features = { "ssr", "hydrate" },
+								},
+								-- for auto-complete within leptos
+								procMacro = {
+									ignored = {
+										leptos_macro = {
+											-- optional: --
+											-- "component",
+											-- "server",
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 			}
 
@@ -85,8 +126,14 @@ return {
 					filetypes = { "html", "templ" },
 				},
 				tailwindcss = {
-					filetypes = { "templ", "javascript", "typescript" },
-					init_options = { userLanguages = { templ = "html" } },
+					filetypes = { "templ", "javascript", "typescript", "rust", "svelte" },
+					init_options = {
+						userLanguages = {
+							templ = "html",
+							svelte = "html",
+							rust = "html", -- This tells tailwind to treat Rust files like HTML
+						},
+					},
 				},
 			}
 
@@ -139,6 +186,9 @@ return {
 					config.server_config or {},
 					special_server_configs[config.server] or {}
 				)
+
+				-- vim.lsp.enable(config.server)
+				-- vim.lsp.config(config.server, server_config)
 				lspconfig[config.server].setup(server_config)
 
 				-- Setup additional servers if any
@@ -146,6 +196,8 @@ return {
 					for _, server in ipairs(config.additional_servers) do
 						local additional_config =
 							vim.tbl_deep_extend("force", default_config, special_server_configs[server] or {})
+
+						-- vim.lsp.config(server, additional_config)
 						lspconfig[server].setup(additional_config)
 					end
 				end
@@ -166,6 +218,9 @@ return {
 					python = { "isort", "black" },
 					go = { "gopls", "goimports", "golines" },
 					templ = { "templ", "prettierd" },
+					rust = { "rustfmt" },
+					php = { "pint" },
+					-- blade = { "blade-formatter" },
 				},
 				format_on_save = {
 					lsp_fallback = true,
@@ -176,6 +231,13 @@ return {
 
 			-- Add filetype for templ
 			vim.filetype.add({ extension = { templ = "templ" } })
+
+			-- add filetype for svelte
+			vim.filetype.add({
+				extension = {
+					svelte = "svelte",
+				},
+			})
 		end,
 	},
 }

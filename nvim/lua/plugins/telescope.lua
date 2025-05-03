@@ -17,6 +17,12 @@ return {
 					".cache",
 					".aws",
 					"target",
+					"vendor",
+					"storage",
+					-- elixir
+					"deps",
+					"_build",
+					".elixir_ls",
 				},
 			},
 			pickers = {

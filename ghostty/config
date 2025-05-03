@@ -13,6 +13,7 @@ maximize = true
 
 keybind = super+1=goto_tab:1
 keybind = super+2=goto_tab:2
-keybind = super+2=goto_tab:3
+keybind = super+3=goto_tab:3
+keybind = super+4=goto_tab:4
 
 custom-shader = ./shaders/starfield.glsl
