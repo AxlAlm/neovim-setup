@@ -22,3 +22,8 @@ export PATH=$HOME//opt/homebrew/bin:$PATH
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+// go
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+export PATH=$PATH:$(go env GOPATH)/bin
+
