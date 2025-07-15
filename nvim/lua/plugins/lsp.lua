@@ -4,8 +4,6 @@ return {
 		dependencies = {
 			"hrsh7th/cmp-nvim-lsp",
 			"williamboman/mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
-			"WhoIsSethDaniel/mason-tool-installer.nvim",
 			"stevearc/conform.nvim",
 		},
 		config = function()
@@ -30,7 +28,11 @@ return {
 					formatters = { "goimports", "golines" },
 					linters = {},
 					server_config = {
-						cmd_env = { GOFLAGS = "-tags=integration,e2e,wireinject" },
+						settings = {
+							gopls = {
+								buildFlags = { "-tags=integration,e2e,wireinject" },
+							},
+						},
 					},
 					additional_servers = { "templ" },
 				},
@@ -100,26 +102,6 @@ return {
 				},
 			}
 
-			local servers_to_install = {}
-			local tools_to_install = {}
-			for _, config in pairs(language_configs) do
-				table.insert(servers_to_install, config.server)
-
-				if config.additional_servers then
-					for _, server in ipairs(config.additional_servers) do
-						table.insert(servers_to_install, server)
-					end
-				end
-
-				for _, formatter in ipairs(config.formatters) do
-					table.insert(tools_to_install, formatter)
-				end
-
-				for _, linter in ipairs(config.linters) do
-					table.insert(tools_to_install, linter)
-				end
-			end
-
 			-- Server-specific configurations (outside of language configs)
 			local special_server_configs = {
 				html = {
@@ -158,15 +140,6 @@ return {
 						package_uninstalled = "✗",
 					},
 				},
-			})
-
-			require("mason-lspconfig").setup({
-				ensure_installed = servers_to_install,
-				automatic_installation = true,
-			})
-
-			require("mason-tool-installer").setup({
-				ensure_installed = tools_to_install,
 			})
 
 			local lspconfig = require("lspconfig")
@@ -220,7 +193,6 @@ return {
 					templ = { "templ", "prettierd" },
 					rust = { "rustfmt" },
 					php = { "pint" },
-					-- blade = { "blade-formatter" },
 				},
 				format_on_save = {
 					lsp_fallback = true,
