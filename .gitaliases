@@ -1,0 +1,42 @@
+[alias]
+    fl = log --follow --
+    lb = !git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  %d. \\033[33m%s: \\033[37m %s\\033[0m\\n\", NR, substr($2, 1, length($2)-1), $1)}'
+    sw = "!f() { \
+        git switch $(git lb | awk \"NR==$1 {print}\" | sed 's/\\x1b\\[[0-9;]*m//g' | awk '{print $NF}'); \
+    }; f"
+    prev = "!f() { \
+        if [ -z \"$1\" ]; then \
+            echo \"Usage: git prev <filename>\"; \
+            return 1; \
+        fi; \
+        if [ ! -f \"$1\" ]; then \
+            echo \"File $1 does not exist\"; \
+            return 1; \
+        fi; \
+        current_hash=$(git hash-object \"$1\"); \
+        commits=$(git rev-list HEAD -- \"$1\"); \
+        if [ -z \"$commits\" ]; then \
+            echo \"No history found for $1\"; \
+            return 1; \
+        fi; \
+        found=false; \
+        prev_commit=\"\"; \
+        for commit in $commits; do \
+            if [ \"$found\" = \"true\" ]; then \
+                prev_commit=$commit; \
+                break; \
+            fi; \
+            file_hash=$(git ls-tree $commit \"$1\" | awk '{print $3}'); \
+            if [ \"$file_hash\" = \"$current_hash\" ]; then \
+                found=true; \
+            fi; \
+        done; \
+        if [ -z \"$prev_commit\" ]; then \
+            echo \"Already at oldest version of $1\"; \
+            return 1; \
+        fi; \
+        temp_file=\"$1.prev-$prev_commit\"; \
+        git show \"$prev_commit:$1\" > \"$temp_file\"; \
+        echo \"Checked out previous version to: $temp_file\"; \
+        echo \"From commit: $(git log -1 --pretty=format:'%h - %s (%cr) <%an>' $prev_commit)\"; \
+    }; f"

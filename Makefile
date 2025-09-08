@@ -11,7 +11,7 @@ install:
 
 
 CURRENT_DIR := $(shell pwd)
-setup: symlinking-nvim-config symlinking-ghostty-config symlinking-zsh-config
+setup: symlinking-nvim-config symlinking-ghostty-config symlinking-zsh-config symlinking-gitaliases-config:
 	@echo "Setup complete!"
 
 NVIM_CONFIG_PATH := ${HOME}/.config/nvim
@@ -42,4 +42,12 @@ symlinking-zsh-config:
 	@ln -sf "$(CURRENT_DIR)/ohmyzsh/.zshrc" "$(ZSHRC_FILE_PATH)"
 	@echo "Creating symlink from $(CURRENT_DIR)/ohmyzsh/.zprofile to $(ZSPROFILE_FILE_PATH)"
 	@ln -sf "$(CURRENT_DIR)/ohmyzsh/.zprofile" "$(ZSPROFILE_FILE_PATH)"
+
+
+GITALIAS_PATH := ${HOME}/.gitaliases
+symlinking-gitaliases-config:
+	@echo "Creating symlink from $(CURRENT_DIR)/.gitaliases to $(GITALIAS_PATH)"
+	@ln -sf "$(CURRENT_DIR)/.gitaliases" "$(GITALIAS_PATH)"
+
+
 
