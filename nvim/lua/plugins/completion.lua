@@ -40,7 +40,6 @@ return {
 			-- SQL completion configuration
 			cmp.setup.filetype({ "sql" }, {
 				sources = {
-					{ name = "vim-dadbod-completion" },
 					{ name = "buffer" },
 				},
 			})

@@ -7,12 +7,6 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 -- close all tabs
 vim.keymap.set("n", "<leader>ct", ":tabclose<CR>", { desc = "Close all tabs" })
 
--- open DadbodUI in a different tab
-vim.keymap.set("n", "<leader>od", function()
-	vim.cmd("tabnew")
-	vim.cmd("DBUI")
-end, { desc = "Open DBUI in new tab" })
-
 -- open terminal in a different tab
 vim.keymap.set("n", "<leader>ot", function()
 	vim.cmd("tabnew")

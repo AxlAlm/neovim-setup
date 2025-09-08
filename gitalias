@@ -1,0 +1,15 @@
+[alias]
+    lb = !git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  %d. \\033[33m%s: \\033[37m %s\\033[0m\\n\", NR, substr($2, 1, length($2)-1), $1)}'
+    sw = "!f() { \
+        git switch $(git lb | awk \"NR==$1 {print}\" | sed 's/\\x1b\\[[0-9;]*m//g' | awk '{print $NF}'); \
+    }; f"
+    prev = "!f() { \
+        current=$(git log -n 1 --pretty=format:%H -- \"$1\"); \
+        prev=$(git log --pretty=format:%H --follow -- \"$1\" | grep -A 1 \"$current\" | tail -1); \
+        if [ ! -z \"$prev\" ]; then \
+            git checkout \"$prev\" -- \"$1\"; \
+            echo \"Reverted $1 to commit $prev\"; \
+        else \
+            echo \"No previous version found\"; \
+        fi; \
+    }; f"
