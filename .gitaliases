@@ -35,7 +35,9 @@
             echo \"Already at oldest version of $1\"; \
             return 1; \
         fi; \
-        temp_file=\"$1.prev-$prev_commit\"; \
+        mkdir -p ~/tmp; \
+        filename=$(basename \"$1\"); \
+        temp_file=\"$HOME/tmp/$filename.prev-$prev_commit\"; \
         git show \"$prev_commit:$1\" > \"$temp_file\"; \
         echo \"Checked out previous version to: $temp_file\"; \
         echo \"From commit: $(git log -1 --pretty=format:'%h - %s (%cr) <%an>' $prev_commit)\"; \
