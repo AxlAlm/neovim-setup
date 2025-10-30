@@ -142,7 +142,6 @@ return {
 				},
 			})
 
-			local lspconfig = require("lspconfig")
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 			local default_config = {
@@ -160,9 +159,7 @@ return {
 					special_server_configs[config.server] or {}
 				)
 
-				-- vim.lsp.enable(config.server)
-				-- vim.lsp.config(config.server, server_config)
-				lspconfig[config.server].setup(server_config)
+				vim.lsp.config(config.server, server_config)
 
 				-- Setup additional servers if any
 				if config.additional_servers then
@@ -170,8 +167,7 @@ return {
 						local additional_config =
 							vim.tbl_deep_extend("force", default_config, special_server_configs[server] or {})
 
-						-- vim.lsp.config(server, additional_config)
-						lspconfig[server].setup(additional_config)
+						vim.lsp.config(server, additional_config)
 					end
 				end
 			end
