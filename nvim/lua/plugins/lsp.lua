@@ -23,6 +23,13 @@ return {
 					},
 				},
 
+				odin = {
+					server = "ols",
+					formatters = {},
+					linters = {},
+					server_config = {},
+				},
+
 				go = {
 					server = "gopls",
 					formatters = { "goimports", "golines" },

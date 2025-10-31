@@ -27,6 +27,7 @@ return {
 				"eex",
 				"heex",
 				"svelte",
+				"odin",
 			},
 
 			sync_install = false,
