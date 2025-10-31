@@ -8,6 +8,16 @@ return {
 	config = function()
 		local telescope = require("telescope")
 
+		local action_state = require("telescope.actions.state")
+
+		-- Custom action to add file to harpoon
+		local harpoon_add = function()
+			local selection = action_state.get_selected_entry()
+			local mark = require("harpoon.mark")
+			mark.add_file(selection.path or selection.filename or selection.value)
+			print("Added to Harpoon: " .. (selection.path or selection.filename or selection.value))
+		end
+
 		telescope.setup({
 			defaults = {
 				path_display = { "truncate " },
@@ -24,6 +34,14 @@ return {
 					"_build",
 					".elixir_ls",
 				},
+				mappings = {
+					n = {
+						["fa"] = harpoon_add,
+					},
+				},
+				cache_picker = {
+					num_pickers = 20, -- Keep history of last 20 pickers
+				},
 			},
 			pickers = {
 				find_files = {
@@ -37,5 +55,7 @@ return {
 		keymap.set("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
 		keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
 		keymap.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
+		keymap.set("n", "<leader>fp", "<cmd>Telescope resume<cr>", { desc = "Resume previous telescope picker" })
+		keymap.set("n", "<leader>fh", "<cmd>Telescope pickers<cr>", { desc = "List all previous telescope pickers" })
 	end,
 }
