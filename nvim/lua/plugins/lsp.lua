@@ -157,7 +157,7 @@ return {
 			}
 
 			-- Setup all language servers
-			for _, config in pairs(language_configs) do
+			for name, config in pairs(language_configs) do
 				-- Setup main server for the language
 				local server_config = vim.tbl_deep_extend(
 					"force",
@@ -166,7 +166,9 @@ return {
 					special_server_configs[config.server] or {}
 				)
 
-				vim.lsp.config(config.server, server_config)
+				-- vim.lsp.config(config.server, config.server_config)
+				vim.lsp.config[config.server] = server_config
+				vim.lsp.enable(config.server)
 
 				-- Setup additional servers if any
 				if config.additional_servers then
@@ -175,6 +177,7 @@ return {
 							vim.tbl_deep_extend("force", default_config, special_server_configs[server] or {})
 
 						vim.lsp.config(server, additional_config)
+						vim.lsp.enable(server)
 					end
 				end
 			end
