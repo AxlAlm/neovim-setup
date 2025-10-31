@@ -91,7 +91,7 @@ return {
 						settings = {
 							["rust-analyzer"] = {
 								cargo = {
-									features = { "ssr", "hydrate" },
+									-- features = { "ssr", "hydrate" },
 								},
 								-- for auto-complete within leptos
 								procMacro = {
@@ -115,7 +115,7 @@ return {
 					filetypes = { "html", "templ" },
 				},
 				tailwindcss = {
-					filetypes = { "templ", "javascript", "typescript", "rust", "svelte" },
+					filetypes = { "templ", "javascript", "typescript", "svelte" },
 					init_options = {
 						userLanguages = {
 							templ = "html",
