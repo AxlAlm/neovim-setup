@@ -7,6 +7,8 @@ install:
 	brew install neovim
 	brew install curl
 	brew install gh
+	brew install mise
+	brew install ripgrep
 	brew install zsh
 	@[ -d "$$HOME/.oh-my-zsh" ] || \
 		sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"

@@ -1,0 +1,14 @@
+# Lua language profile tools
+# Install with: mise install
+
+[tools]
+# LSP server - using cargo backend to avoid lua plugin issues
+"cargo:stylua" = "latest"
+
+# Lua language server
+lua-language-server = "latest"
+
+# Optional: Lua runtime if needed
+# lua = "5.4"
+# luarocks = "latest"
+# luacheck = "latest"

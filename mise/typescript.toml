@@ -1,0 +1,17 @@
+# TypeScript/JavaScript language profile tools
+# Install with: mise install
+
+[tools]
+node = "20"
+
+# LSP servers (installed via npm)
+"npm:typescript-language-server" = "latest"
+"npm:vscode-langservers-extracted" = "latest"  # Provides html, css, json servers
+"npm:@tailwindcss/language-server" = "latest"
+
+# Formatters
+"npm:@fsouza/prettierd" = "latest"
+
+# Optional: Additional tools
+# "npm:eslint" = "latest"
+# "npm:typescript" = "latest"

@@ -1,0 +1,18 @@
+# Svelte language profile tools
+# Install with: mise install
+
+[tools]
+node = "20"
+
+# LSP server
+"npm:svelte-language-server" = "latest"
+
+# TailwindCSS support
+"npm:@tailwindcss/language-server" = "latest"
+
+# Formatter
+"npm:@fsouza/prettierd" = "latest"
+
+# Optional: Additional tools
+# "npm:svelte-check" = "latest"
+# "npm:eslint" = "latest"

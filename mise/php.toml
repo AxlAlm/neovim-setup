@@ -1,0 +1,21 @@
+# PHP language profile tools
+# Install with: mise install
+
+[tools]
+php = "8.3"
+composer = "latest"
+
+# LSP server
+# Install intelephense via composer:
+# composer global require felixfbecker/language-server
+
+# Formatter
+# Install pint (Laravel's code style fixer):
+# composer global require laravel/pint
+
+# Note: Ensure composer global bin directory is in PATH
+# export PATH="$HOME/.composer/vendor/bin:$PATH"
+
+# Optional: Additional tools
+# phpunit = "latest"
+# phpstan = "latest"

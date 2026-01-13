@@ -1,0 +1,15 @@
+# Rust language profile tools
+# Install with: mise install
+
+[tools]
+rust = "stable"
+
+# LSP server and formatter come with rust toolchain:
+# - rust-analyzer
+# - rustfmt
+# - cargo
+
+# Optional: Additional Rust tools
+# cargo-watch = "latest"
+# cargo-edit = "latest"
+# cargo-expand = "latest"

@@ -1,0 +1,3 @@
+# Language profiles for neovim-setup repo
+# This is a neovim configuration written in Lua
+lua

@@ -1,0 +1,6 @@
+# Lua language tools for neovim-setup repo
+[tools]
+# Lua language server
+lua-language-server = "latest"
+# Lua formatter
+stylua = "latest"

@@ -1,0 +1,19 @@
+# Python language profile tools
+# Install with: mise install
+
+[tools]
+python = "3.12"
+
+# LSP server
+"pipx:pyright" = "latest"
+
+# Formatters
+"pipx:isort" = "latest"
+"pipx:black" = "latest"
+
+# Linter
+"pipx:ruff" = "latest"
+
+# Optional: Additional tools
+# "pipx:pytest" = "latest"
+# "pipx:mypy" = "latest"

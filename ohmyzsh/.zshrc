@@ -6,6 +6,9 @@ plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
+eval "$(mise activate zsh)"
+
+
 # psql and other commands
 # export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 

@@ -1,0 +1,13 @@
+# Odin language profile tools
+# Install with: mise install
+
+[tools]
+# Odin compiler and LSP server must be installed manually
+# Visit: https://odin-lang.org/docs/install/
+
+# OLS (Odin Language Server)
+# Clone and build from: https://github.com/DanielGavin/ols
+# Place the binary in your PATH, e.g., ~/.local/bin/ols
+
+# Note: Mise doesn't have built-in support for Odin yet
+# Manual installation required

@@ -3,201 +3,21 @@ return {
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			"hrsh7th/cmp-nvim-lsp",
-			"williamboman/mason.nvim",
 			"stevearc/conform.nvim",
 		},
 		config = function()
-			local language_configs = {
-				lua = {
-					server = "lua_ls",
-					formatters = { "stylua" },
-					linters = {},
-					server_config = {
-						settings = {
-							Lua = {
-								diagnostics = {
-									globals = { "vim" },
-								},
-							},
-						},
-					},
-				},
+			-- Initialize the language profile system
+			local langs = require("langs").init()
 
-				odin = {
-					server = "ols",
-					formatters = {},
-					linters = {},
-					server_config = {},
-				},
-
-				go = {
-					server = "gopls",
-					formatters = { "goimports", "golines" },
-					linters = {},
-					server_config = {
-						settings = {
-							gopls = {
-								buildFlags = { "-tags=integration,e2e,wireinject" },
-							},
-						},
-					},
-					additional_servers = { "templ" },
-				},
-
-				-- also for javascript
-				typescript = {
-					server = "ts_ls",
-					formatters = { "prettierd" },
-					linters = {},
-					server_config = {},
-					additional_servers = { "html", "cssls", "tailwindcss" },
-				},
-
-				svelte = {
-					server = "svelte",
-					formatters = { "prettierd" },
-					linters = {},
-					server_config = {},
-				},
-
-				python = {
-					server = "pyright",
-					formatters = { "isort", "black" },
-					linters = { "ruff" },
-					server_config = {},
-				},
-
-				elixir = {
-					server = "elixirls",
-					formatters = {},
-					linters = {},
-					server_config = {
-						cmd = { vim.fn.expand("$HOME/.local/share/nvim/mason/bin/elixir-ls") },
-					},
-				},
-
-				php = {
-					server = "intelephense",
-					formatters = { "pint" },
-					linters = {},
-					server_config = {},
-				},
-
-				rust = {
-					server = "rust_analyzer",
-					formatters = {},
-					linters = {},
-					server_config = {
-						settings = {
-							["rust-analyzer"] = {
-								cargo = {
-									-- features = { "ssr", "hydrate" },
-								},
-								-- for auto-complete within leptos
-								procMacro = {
-									ignored = {
-										leptos_macro = {
-											-- optional: --
-											-- "component",
-											-- "server",
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			}
-
-			-- Server-specific configurations (outside of language configs)
-			local special_server_configs = {
-				html = {
-					filetypes = { "html", "templ" },
-				},
-				tailwindcss = {
-					filetypes = { "templ", "javascript", "typescript", "svelte" },
-					init_options = {
-						userLanguages = {
-							templ = "html",
-							svelte = "html",
-							rust = "html", -- This tells tailwind to treat Rust files like HTML
-						},
-					},
-				},
-			}
-
-			-- Setup on_attach function (assuming it's defined elsewhere)
-			local on_attach = function(_, bufnr)
-				local opts = { buffer = bufnr, remap = false }
-				vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-				vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-				vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-				-- diagnostics
-				vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
-				vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, opts)
-			end
-
-			-- Setup mason
-			require("mason").setup({
-				ui = {
-					icons = {
-						package_installed = "✓",
-						package_pending = "➜",
-						package_uninstalled = "✗",
-					},
-				},
-			})
-
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-			local default_config = {
-				on_attach = on_attach,
-				capabilities = capabilities,
-			}
-
-			-- Setup all language servers
-			for name, config in pairs(language_configs) do
-				-- Setup main server for the language
-				local server_config = vim.tbl_deep_extend(
-					"force",
-					default_config,
-					config.server_config or {},
-					special_server_configs[config.server] or {}
-				)
-
-				-- vim.lsp.config(config.server, config.server_config)
-				vim.lsp.config[config.server] = server_config
-				vim.lsp.enable(config.server)
-
-				-- Setup additional servers if any
-				if config.additional_servers then
-					for _, server in ipairs(config.additional_servers) do
-						local additional_config =
-							vim.tbl_deep_extend("force", default_config, special_server_configs[server] or {})
-
-						vim.lsp.config(server, additional_config)
-						vim.lsp.enable(server)
-					end
-				end
-			end
-
+			-- Setup conform with base formatters
 			local conform = require("conform")
 			conform.setup({
 				formatters_by_ft = {
-					javascript = { "prettierd" },
-					typescript = { "prettierd" },
-					css = { "prettierd" },
-					html = { "prettierd" },
+					-- Base formatters that apply globally
+					-- Language-specific formatters are added by profiles
 					json = { "prettierd" },
 					yaml = { "prettierd" },
 					markdown = { "prettierd" },
-					lua = { "stylua" },
-					python = { "isort", "black" },
-					go = { "gopls", "goimports", "golines" },
-					templ = { "templ", "prettierd" },
-					rust = { "rustfmt" },
-					php = { "pint" },
 				},
 				format_on_save = {
 					lsp_fallback = true,
@@ -206,14 +26,54 @@ return {
 				},
 			})
 
-			-- Add filetype for templ
-			vim.filetype.add({ extension = { templ = "templ" } })
+			-- Auto-load profiles from .nvim-profiles file on startup
+			vim.api.nvim_create_autocmd("VimEnter", {
+				callback = function()
+					langs.auto_load()
+				end,
+				desc = "Auto-load language profiles from .nvim-profiles",
+			})
 
-			-- add filetype for svelte
-			vim.filetype.add({
-				extension = {
-					svelte = "svelte",
-				},
+			-- Create user commands for loading profiles
+			vim.api.nvim_create_user_command("LoadLanguage", function(opts)
+				langs.load(opts.args)
+			end, {
+				nargs = 1,
+				complete = function()
+					return langs.list_available()
+				end,
+				desc = "Load a language profile",
+			})
+
+			vim.api.nvim_create_user_command("LoadLanguages", function(opts)
+				local languages = vim.split(opts.args, " ", { trimempty = true })
+				langs.load_many(languages)
+			end, {
+				nargs = "+",
+				complete = function()
+					return langs.list_available()
+				end,
+				desc = "Load multiple language profiles",
+			})
+
+			vim.api.nvim_create_user_command("ListLanguageProfiles", function()
+				local available = langs.list_available()
+				local loaded = langs.list_loaded()
+
+				print("Available profiles: " .. table.concat(available, ", "))
+				print("Loaded profiles: " .. table.concat(loaded, ", "))
+			end, {
+				desc = "List available and loaded language profiles",
+			})
+
+			vim.api.nvim_create_user_command("InstallTreesitterParsers", function(opts)
+				local parsers = vim.split(opts.args, " ", { trimempty = true })
+				for _, parser in ipairs(parsers) do
+					pcall(vim.cmd, "TSInstall " .. parser)
+				end
+			end, {
+				nargs = "+",
+				desc = "Install treesitter parsers manually",
 			})
 		end,
 	},
