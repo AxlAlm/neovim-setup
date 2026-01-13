@@ -1,18 +1,25 @@
+CURRENT_DIR := $(shell pwd)
+setup: install make_config_dir symlinking-nvim-config symlinking-ghostty-config symlinking-zsh-config symlinking-gitaliases-config set_git_editor_neovim set_git_editor_neovim
+	@echo "Setup complete!"
 
 install:
 	brew install --cask ghostty
-	brew install golang 
-	brew install rust 
-	brew install python
-	brew install npm
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-	git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+	brew install neovim
+	brew install curl
+	brew install gh
+	brew install zsh
+	@[ -d "$$HOME/.oh-my-zsh" ] || \
+		sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	@[ -d "$${ZSH_CUSTOM:-$$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ] || \
+		git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $${ZSH_CUSTOM:-$$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+	@[ -d "$${ZSH_CUSTOM:-$$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ] || \
+		git clone https://github.com/zsh-users/zsh-autosuggestions $${ZSH_CUSTOM:-$$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
+make_config_dir:
+	@mkdir -p "$$HOME/.config"
 
-CURRENT_DIR := $(shell pwd)
-setup: symlinking-nvim-config symlinking-ghostty-config symlinking-zsh-config symlinking-gitaliases-config:
-	@echo "Setup complete!"
+set_git_editor_neovim:
+	git config --global core.editor nvim
 
 NVIM_CONFIG_PATH := ${HOME}/.config/nvim
 BACKUP_PATH := ${HOME}/.config/nvim.backup.$(shell date +%Y%m%d_%H%M%S)
@@ -48,6 +55,3 @@ GITALIAS_PATH := ${HOME}/.gitaliases
 symlinking-gitaliases-config:
 	@echo "Creating symlink from $(CURRENT_DIR)/.gitaliases to $(GITALIAS_PATH)"
 	@ln -sf "$(CURRENT_DIR)/.gitaliases" "$(GITALIAS_PATH)"
-
-
-
