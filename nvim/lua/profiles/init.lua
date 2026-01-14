@@ -3,6 +3,9 @@ local M = {}
 -- Track loaded profiles
 M.loaded_profiles = {}
 
+-- Track custom profile
+M.custom_profile = nil
+
 -- Shared LSP configuration
 local lsp_config = nil
 
@@ -284,12 +287,47 @@ function M.load_from_file(filepath)
 	return true
 end
 
--- Auto-load profiles from .nvim-profiles in project root
+-- Load custom profile from .nvim-profile.lua
+function M.load_custom_profile(filepath)
+	-- Try to load the lua file
+	local ok, custom_profile = pcall(dofile, filepath)
+	if not ok then
+		vim.notify("Failed to load custom profile: " .. filepath, vim.log.levels.ERROR)
+		return false
+	end
+
+	-- Load base profiles first if specified
+	if custom_profile.base_profiles then
+		M.load_many(custom_profile.base_profiles, { quiet = true })
+	end
+
+	-- Apply custom configuration
+	setup_profile(custom_profile, { custom = true })
+
+	-- Store custom profile info
+	M.custom_profile = {
+		name = custom_profile.name or "custom",
+		path = filepath,
+		base_profiles = custom_profile.base_profiles or {},
+	}
+
+	print("Loaded custom profile from: " .. filepath)
+	return true
+end
+
+-- Auto-load profiles from .nvim-profile.lua or .nvim-profiles in project root
 function M.auto_load()
 	local project_root = M.find_project_root()
-	local profiles_file = project_root .. "/.nvim-profiles"
 
-	-- Check if file exists
+	-- Try .nvim-profile.lua first (new format)
+	local lua_profile = project_root .. "/.nvim-profile.lua"
+	if vim.fn.filereadable(lua_profile) == 1 then
+		M.load_custom_profile(lua_profile)
+		return
+	end
+
+	-- Fall back to .nvim-profiles (legacy format)
+	local profiles_file = project_root .. "/.nvim-profiles"
 	if vim.fn.filereadable(profiles_file) == 1 then
 		M.load_from_file(profiles_file)
 	end

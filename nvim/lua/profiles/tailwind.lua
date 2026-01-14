@@ -2,44 +2,18 @@ local M = {}
 
 -- Profile metadata
 M.name = "tailwind"
-M.filetypes = {
-	"html",
-	"css",
-	"javascript",
-	"typescript",
-	"javascriptreact",
-	"typescriptreact",
-	"svelte",
-	"vue",
-	"templ",
-	"rust",
-}
+M.filetypes = {}
 M.treesitter_parsers = {}
 
 -- LSP servers configuration
+-- Note: This is a basic configuration. For language-specific filetypes,
+-- configure them in your .nvim-profile.lua file
 M.lsp_servers = {
 	{
 		name = "tailwindcss",
 		config = {
-			filetypes = {
-				"html",
-				"css",
-				"javascript",
-				"typescript",
-				"javascriptreact",
-				"typescriptreact",
-				"svelte",
-				"vue",
-				"templ",
-				"rust",
-			},
-			init_options = {
-				userLanguages = {
-					templ = "html",
-					rust = "html",
-					svelte = "html",
-				},
-			},
+			-- Filetypes should be configured in your custom profile
+			-- This allows you to only enable tailwind for the languages you use
 		},
 	},
 }

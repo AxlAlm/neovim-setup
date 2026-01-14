@@ -57,13 +57,23 @@ return {
 			})
 
 			vim.api.nvim_create_user_command("ListProfiles", function()
-				local available = profiles.list_available()
 				local loaded = profiles.list_loaded()
 
-				print("Available profiles: " .. table.concat(available, ", "))
-				print("Loaded profiles: " .. table.concat(loaded, ", "))
+				print("=== Base Profiles ===")
+				if #loaded > 0 then
+					print(table.concat(loaded, ", "))
+				else
+					print("None")
+				end
+
+				-- Show custom profile if loaded
+				if profiles.custom_profile then
+					print("")
+					print("=== Custom Profile ===")
+					print(profiles.custom_profile.path)
+				end
 			end, {
-				desc = "List available and loaded profiles",
+				desc = "List loaded profiles",
 			})
 
 			vim.api.nvim_create_user_command("InstallTreesitterParsers", function(opts)
