@@ -25,16 +25,7 @@ M.lsp_servers = {
 }
 
 -- Special server configurations
-M.special_servers = {
-	tailwindcss = {
-		filetypes = { "rust" },
-		init_options = {
-			userLanguages = {
-				rust = "html",
-			},
-		},
-	},
-}
+M.special_servers = {}
 
 -- Formatters for conform.nvim
 M.formatters = {
@@ -46,5 +37,10 @@ M.linters = {}
 
 -- Custom filetype associations
 M.filetype_extensions = {}
+
+-- Telescope ignore patterns
+M.telescope_ignore_patterns = {
+	"target",
+}
 
 return M

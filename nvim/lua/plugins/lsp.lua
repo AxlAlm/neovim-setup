@@ -6,8 +6,8 @@ return {
 			"stevearc/conform.nvim",
 		},
 		config = function()
-			-- Initialize the language profile system
-			local langs = require("langs").init()
+			-- Initialize the profile system
+			local profiles = require("profiles").init()
 
 			-- Setup conform with base formatters
 			local conform = require("conform")
@@ -29,41 +29,41 @@ return {
 			-- Auto-load profiles from .nvim-profiles file on startup
 			vim.api.nvim_create_autocmd("VimEnter", {
 				callback = function()
-					langs.auto_load()
+					profiles.auto_load()
 				end,
-				desc = "Auto-load language profiles from .nvim-profiles",
+				desc = "Auto-load profiles from .nvim-profiles",
 			})
 
 			-- Create user commands for loading profiles
-			vim.api.nvim_create_user_command("LoadLanguage", function(opts)
-				langs.load(opts.args)
+			vim.api.nvim_create_user_command("LoadProfile", function(opts)
+				profiles.load(opts.args)
 			end, {
 				nargs = 1,
 				complete = function()
-					return langs.list_available()
+					return profiles.list_available()
 				end,
-				desc = "Load a language profile",
+				desc = "Load a profile",
 			})
 
-			vim.api.nvim_create_user_command("LoadLanguages", function(opts)
-				local languages = vim.split(opts.args, " ", { trimempty = true })
-				langs.load_many(languages)
+			vim.api.nvim_create_user_command("LoadProfiles", function(opts)
+				local profile_list = vim.split(opts.args, " ", { trimempty = true })
+				profiles.load_many(profile_list)
 			end, {
 				nargs = "+",
 				complete = function()
-					return langs.list_available()
+					return profiles.list_available()
 				end,
-				desc = "Load multiple language profiles",
+				desc = "Load multiple profiles",
 			})
 
-			vim.api.nvim_create_user_command("ListLanguageProfiles", function()
-				local available = langs.list_available()
-				local loaded = langs.list_loaded()
+			vim.api.nvim_create_user_command("ListProfiles", function()
+				local available = profiles.list_available()
+				local loaded = profiles.list_loaded()
 
 				print("Available profiles: " .. table.concat(available, ", "))
 				print("Loaded profiles: " .. table.concat(loaded, ", "))
 			end, {
-				desc = "List available and loaded language profiles",
+				desc = "List available and loaded profiles",
 			})
 
 			vim.api.nvim_create_user_command("InstallTreesitterParsers", function(opts)

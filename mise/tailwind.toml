@@ -1,0 +1,6 @@
+# Tailwind CSS language profile tools
+# Install with: mise install
+
+[tools]
+# LSP server
+"npm:@tailwindcss/language-server" = "latest"

@@ -4,10 +4,8 @@
 [tools]
 go = "1.23"
 
-# LSP servers
+# LSP server
 # Note: gopls comes with Go toolchain
-# templ must be installed separately
-"go:github.com/a-h/templ/cmd/templ" = "latest"
 
 # Formatters
 "go:golang.org/x/tools/cmd/goimports" = "latest"

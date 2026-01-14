@@ -25,4 +25,11 @@ M.linters = {}
 -- Custom filetype associations
 M.filetype_extensions = {}
 
+-- Telescope ignore patterns
+M.telescope_ignore_patterns = {
+	"deps",
+	"_build",
+	".elixir_ls",
+}
+
 return M

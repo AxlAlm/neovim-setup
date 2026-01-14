@@ -1,0 +1,9 @@
+# HTML language profile tools
+# Install with: mise install
+
+[tools]
+# LSP server (provides html, css, json, eslint servers)
+"npm:vscode-langservers-extracted" = "latest"
+
+# Formatter
+"npm:@fsouza/prettierd" = "latest"

@@ -43,7 +43,7 @@ local function setup_profile(profile, opts)
 	opts = opts or {}
 
 	if not lsp_config then
-		vim.notify("LSP config not initialized. Call require('langs').init() first.", vim.log.levels.ERROR)
+		vim.notify("LSP config not initialized. Call require('profiles').init() first.", vim.log.levels.ERROR)
 		return
 	end
 
@@ -107,6 +107,24 @@ local function setup_profile(profile, opts)
 		vim.filetype.add({ extension = profile.filetype_extensions })
 	end
 
+	-- Add telescope ignore patterns
+	if profile.telescope_ignore_patterns and next(profile.telescope_ignore_patterns) then
+		local ok, telescope_config = pcall(require, "telescope.config")
+		if ok then
+			local current_patterns = telescope_config.values.file_ignore_patterns or {}
+			-- Add new patterns to existing ones
+			for _, pattern in ipairs(profile.telescope_ignore_patterns) do
+				table.insert(current_patterns, pattern)
+			end
+			-- Update telescope config
+			require("telescope").setup({
+				defaults = {
+					file_ignore_patterns = current_patterns,
+				},
+			})
+		end
+	end
+
 	-- Call custom setup hook if defined
 	if profile.custom_setup then
 		profile.custom_setup(opts, lsp_config)
@@ -131,9 +149,9 @@ function M.load(language, opts)
 	end
 
 	-- Try to load the profile module
-	local ok, profile = pcall(require, "langs." .. language)
+	local ok, profile = pcall(require, "profiles." .. language)
 	if not ok then
-		vim.notify("Language profile not found: " .. language, vim.log.levels.ERROR)
+		vim.notify("Profile not found: " .. language, vim.log.levels.ERROR)
 		return false
 	end
 
@@ -144,7 +162,7 @@ function M.load(language, opts)
 	M.loaded_profiles[language] = true
 
 	if not opts.quiet then
-		print("Loaded language profile: " .. language)
+		print("Loaded profile: " .. language)
 	end
 
 	return true
@@ -176,10 +194,10 @@ end
 
 -- List available profiles
 function M.list_available()
-	local langs_path = vim.fn.stdpath("config") .. "/lua/langs"
+	local profiles_path = vim.fn.stdpath("config") .. "/lua/profiles"
 	local profiles = {}
 
-	for name, ftype in vim.fs.dir(langs_path) do
+	for name, ftype in vim.fs.dir(profiles_path) do
 		if ftype == "file" and name:match("%.lua$") and name ~= "init.lua" then
 			table.insert(profiles, (name:gsub("%.lua$", "")))
 		end

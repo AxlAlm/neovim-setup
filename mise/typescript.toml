@@ -4,12 +4,10 @@
 [tools]
 node = "20"
 
-# LSP servers (installed via npm)
+# LSP server
 "npm:typescript-language-server" = "latest"
-"npm:vscode-langservers-extracted" = "latest"  # Provides html, css, json servers
-"npm:@tailwindcss/language-server" = "latest"
 
-# Formatters
+# Formatter
 "npm:@fsouza/prettierd" = "latest"
 
 # Optional: Additional tools

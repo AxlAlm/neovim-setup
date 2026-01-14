@@ -1,0 +1,9 @@
+# Templ language profile tools
+# Install with: mise install
+
+[tools]
+# Templ LSP and formatter
+"go:github.com/a-h/templ/cmd/templ" = "latest"
+
+# Formatter
+"npm:@fsouza/prettierd" = "latest"

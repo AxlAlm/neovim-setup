@@ -14,16 +14,7 @@ M.lsp_servers = {
 }
 
 -- Special server configurations
-M.special_servers = {
-	tailwindcss = {
-		filetypes = { "svelte" },
-		init_options = {
-			userLanguages = {
-				svelte = "html",
-			},
-		},
-	},
-}
+M.special_servers = {}
 
 -- Formatters for conform.nvim
 M.formatters = {

@@ -23,19 +23,11 @@ return {
 			defaults = {
 				path_display = { "truncate " },
 				file_ignore_patterns = {
-					"node_modules",
+					-- Base patterns that apply to all projects
 					".git/",
 					".cache",
 					".aws",
-					"target",
-					"vendor",
-					"storage",
-					-- elixir
-					"deps",
-					"_build",
-					".elixir_ls",
-					-- templ generated files
-					"_templ%.go$",
+					-- Profile-specific patterns are added by profiles
 				},
 				mappings = {
 					n = {

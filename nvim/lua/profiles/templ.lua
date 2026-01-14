@@ -1,14 +1,14 @@
 local M = {}
 
 -- Profile metadata
-M.name = "php"
-M.filetypes = { "php" }
-M.treesitter_parsers = { "php" }
+M.name = "templ"
+M.filetypes = { "templ" }
+M.treesitter_parsers = { "templ" }
 
 -- LSP servers configuration
 M.lsp_servers = {
 	{
-		name = "intelephense",
+		name = "templ",
 		config = {},
 	},
 }
@@ -18,13 +18,20 @@ M.special_servers = {}
 
 -- Formatters for conform.nvim
 M.formatters = {
-	php = { "pint" },
+	templ = { "templ", "prettierd" },
 }
 
 -- Linters
 M.linters = {}
 
 -- Custom filetype associations
-M.filetype_extensions = {}
+M.filetype_extensions = {
+	templ = "templ",
+}
+
+-- Telescope ignore patterns
+M.telescope_ignore_patterns = {
+	"_templ%.go$", -- Generated templ files
+}
 
 return M

@@ -11,20 +11,6 @@ M.lsp_servers = {
 		name = "ts_ls",
 		config = {},
 	},
-	{
-		name = "html",
-		config = {},
-	},
-	{
-		name = "cssls",
-		config = {},
-	},
-	{
-		name = "tailwindcss",
-		config = {
-			filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
-		},
-	},
 }
 
 -- Special server configurations
@@ -36,8 +22,6 @@ M.formatters = {
 	typescript = { "prettierd" },
 	javascriptreact = { "prettierd" },
 	typescriptreact = { "prettierd" },
-	css = { "prettierd" },
-	html = { "prettierd" },
 }
 
 -- Linters
@@ -45,5 +29,10 @@ M.linters = {}
 
 -- Custom filetype associations
 M.filetype_extensions = {}
+
+-- Telescope ignore patterns
+M.telescope_ignore_patterns = {
+	"node_modules",
+}
 
 return M
