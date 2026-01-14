@@ -42,9 +42,9 @@ end
 function M.load(language, opts)
 	opts = opts or {}
 
-	-- Disable treesitter installation by default to avoid flaky parser issues
+	-- Enable treesitter installation by default
 	if opts.install_treesitter == nil then
-		opts.install_treesitter = false
+		opts.install_treesitter = true
 	end
 
 	-- Check if already loaded

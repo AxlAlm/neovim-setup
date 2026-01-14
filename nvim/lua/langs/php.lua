@@ -76,10 +76,13 @@ function M.setup(opts)
 
 	-- Install treesitter parsers if requested
 	if opts.install_treesitter == true and M.treesitter_parsers then
-		local ok_ts, _ = pcall(require, "nvim-treesitter.configs")
+		local ok_ts, ts_parsers = pcall(require, "nvim-treesitter.parsers")
 		if ok_ts then
 			for _, parser in ipairs(M.treesitter_parsers) do
-				pcall(vim.cmd, "TSInstall " .. parser)
+				-- Only install if not already installed
+				if not ts_parsers.has_parser(parser) then
+					pcall(vim.cmd, "TSInstall " .. parser)
+				end
 			end
 		end
 	end
