@@ -34,6 +34,8 @@ return {
 					"deps",
 					"_build",
 					".elixir_ls",
+					-- templ generated files
+					"_templ%.go$",
 				},
 				mappings = {
 					n = {

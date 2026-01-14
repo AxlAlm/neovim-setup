@@ -38,6 +38,81 @@ function M.get_lsp_config()
 	return lsp_config
 end
 
+-- Common setup function for language profiles
+local function setup_profile(profile, opts)
+	opts = opts or {}
+
+	if not lsp_config then
+		vim.notify("LSP config not initialized. Call require('langs').init() first.", vim.log.levels.ERROR)
+		return
+	end
+
+	-- Setup each LSP server
+	if profile.lsp_servers then
+		for _, server in ipairs(profile.lsp_servers) do
+			local server_config = vim.tbl_deep_extend("force", lsp_config.default_config, server.config or {})
+			vim.lsp.config[server.name] = server_config
+			vim.lsp.enable(server.name)
+		end
+	end
+
+	-- Setup special/additional servers
+	if profile.special_servers and next(profile.special_servers) then
+		for server_name, server_config in pairs(profile.special_servers) do
+			local is_main_server = false
+			if profile.lsp_servers then
+				for _, server in ipairs(profile.lsp_servers) do
+					if server.name == server_name then
+						is_main_server = true
+						break
+					end
+				end
+			end
+
+			if not is_main_server then
+				local config = vim.tbl_deep_extend("force", lsp_config.default_config, server_config)
+				vim.lsp.config[server_name] = config
+				vim.lsp.enable(server_name)
+			end
+		end
+	end
+
+	-- Register formatters with conform
+	if profile.formatters and next(profile.formatters) then
+		local ok, conform = pcall(require, "conform")
+		if ok then
+			local current_formatters = conform.formatters_by_ft or {}
+			for ft, formatters in pairs(profile.formatters) do
+				current_formatters[ft] = formatters
+			end
+			conform.setup({ formatters_by_ft = current_formatters })
+		end
+	end
+
+	-- Install treesitter parsers if requested
+	if opts.install_treesitter == true and profile.treesitter_parsers then
+		local ok_ts, ts_parsers = pcall(require, "nvim-treesitter.parsers")
+		if ok_ts then
+			for _, parser in ipairs(profile.treesitter_parsers) do
+				-- Only install if not already installed
+				if not ts_parsers.has_parser(parser) then
+					pcall(vim.cmd, "TSInstall " .. parser)
+				end
+			end
+		end
+	end
+
+	-- Register custom filetypes
+	if profile.filetype_extensions and next(profile.filetype_extensions) then
+		vim.filetype.add({ extension = profile.filetype_extensions })
+	end
+
+	-- Call custom setup hook if defined
+	if profile.custom_setup then
+		profile.custom_setup(opts, lsp_config)
+	end
+end
+
 -- Load a language profile
 function M.load(language, opts)
 	opts = opts or {}
@@ -62,8 +137,8 @@ function M.load(language, opts)
 		return false
 	end
 
-	-- Setup the profile
-	profile.setup(opts)
+	-- Setup the profile using common setup function
+	setup_profile(profile, opts)
 
 	-- Mark as loaded
 	M.loaded_profiles[language] = true
