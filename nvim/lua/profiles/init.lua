@@ -84,11 +84,21 @@ local function setup_profile(profile, opts)
 	if profile.formatters and next(profile.formatters) then
 		local ok, conform = pcall(require, "conform")
 		if ok then
+			-- Get current formatters and merge with new ones
 			local current_formatters = conform.formatters_by_ft or {}
 			for ft, formatters in pairs(profile.formatters) do
 				current_formatters[ft] = formatters
 			end
-			conform.setup({ formatters_by_ft = current_formatters })
+
+			-- Preserve the full conform configuration
+			conform.setup({
+				formatters_by_ft = current_formatters,
+				format_on_save = {
+					lsp_fallback = true,
+					async = false,
+					timeout_ms = 1000,
+				},
+			})
 		end
 	end
 

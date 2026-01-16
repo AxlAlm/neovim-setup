@@ -9,13 +9,7 @@ M.treesitter_parsers = { "go", "gomod", "gowork" }
 M.lsp_servers = {
 	{
 		name = "gopls",
-		config = {
-			settings = {
-				gopls = {
-					-- buildFlags = { "-tags=integration,e2e" },
-				},
-			},
-		},
+		config = {},
 	},
 }
 
@@ -24,7 +18,7 @@ M.special_servers = {}
 
 -- Formatters for conform.nvim
 M.formatters = {
-	go = { "gopls", "goimports", "golines" },
+	go = { "goimports", "golines" },
 }
 
 -- Linters (for future use)
