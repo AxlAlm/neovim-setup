@@ -2,12 +2,19 @@
 # Install with: mise install
 
 [tools]
-# Odin compiler and LSP server must be installed manually
-# Visit: https://odin-lang.org/docs/install/
+odin = "dev-2026-01"
 
-# OLS (Odin Language Server)
-# Clone and build from: https://github.com/DanielGavin/ols
-# Place the binary in your PATH, e.g., ~/.local/bin/ols
-
-# Note: Mise doesn't have built-in support for Odin yet
-# Manual installation required
+# just task to install ols lsp as this is not supported in mise
+# will be globally installed
+[tasks.install-ols]
+run = """
+rm -rf /tmp/ols
+mkdir -p ~/.local/bin
+git clone https://github.com/DanielGavin/ols.git /tmp/ols
+cd /tmp/ols
+./build.sh
+./odinfmt.sh
+mv ols ~/.local/bin/
+mv odinfmt ~/.local/bin/
+rm -rf /tmp/ols
+"""

@@ -34,27 +34,27 @@ return {
 				desc = "Auto-load profiles from .nvim-profiles",
 			})
 
-			-- Create user commands for loading profiles
-			vim.api.nvim_create_user_command("LoadProfile", function(opts)
-				profiles.load(opts.args)
-			end, {
-				nargs = 1,
-				complete = function()
-					return profiles.list_available()
-				end,
-				desc = "Load a profile",
-			})
+			-- -- Create user commands for loading profiles
+			-- vim.api.nvim_create_user_command("LoadProfile", function(opts)
+			-- 	profiles.load(opts.args)
+			-- end, {
+			-- 	nargs = 1,
+			-- 	complete = function()
+			-- 		return profiles.list_available()
+			-- 	end,
+			-- 	desc = "Load a profile",
+			-- })
 
-			vim.api.nvim_create_user_command("LoadProfiles", function(opts)
-				local profile_list = vim.split(opts.args, " ", { trimempty = true })
-				profiles.load_many(profile_list)
-			end, {
-				nargs = "+",
-				complete = function()
-					return profiles.list_available()
-				end,
-				desc = "Load multiple profiles",
-			})
+			-- vim.api.nvim_create_user_command("LoadProfiles", function(opts)
+			-- 	local profile_list = vim.split(opts.args, " ", { trimempty = true })
+			-- 	profiles.load_many(profile_list)
+			-- end, {
+			-- 	nargs = "+",
+			-- 	complete = function()
+			-- 		return profiles.list_available()
+			-- 	end,
+			-- 	desc = "Load multiple profiles",
+			-- })
 
 			vim.api.nvim_create_user_command("ListProfiles", function()
 				local loaded = profiles.list_loaded()

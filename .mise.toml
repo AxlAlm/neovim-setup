@@ -1,6 +1,7 @@
-# Lua language tools for neovim-setup repo
+# Lua language profile tools
+# Install with: mise install
+
 [tools]
-# Lua language server
-lua-language-server = "latest"
-# Lua formatter
 stylua = "latest"
+lua-language-server = "latest"
+
