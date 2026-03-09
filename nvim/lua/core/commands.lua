@@ -28,42 +28,18 @@ function NewFileInSameLocation()
 end
 vim.keymap.set("n", "<leader>nf", ":lua NewFileInSameLocation()<CR>")
 
--- -- delete current file
--- function DeleteFile()
--- 	local current_dir = vim.fn.expand("%:p:h")
--- 	local file_name = vim.fn.expand("%:t")
--- 	local success, err = os.remove(current_dir .. "/" .. file_name)
--- 	if success then
--- 		print("File deleted successfully")
--- 		vim.cmd("bd")
--- 	else
--- 		print("Error deleting file: " .. err)
--- 	end
--- end
 
--- vim.keymap.set("n", "<leader>fd", ":lua DeleteFile()<CR>")
+function CopyCurrentFileName()
+  local name = vim.fn.expand("%:t")
+  vim.fn.setreg("+", name)
+  vim.notify("Copied: " .. name)
+end
+vim.keymap.set("n", "<leader>cfn", ":lua CopyCurrentFileName()<CR>")
 
--- -- soft delete - move to /tmp/.deleted directory
--- function SoftDeleteFile()
--- 	local file_path = vim.fn.expand("%:p")
--- 	local file_name = vim.fn.expand("%:t")
 
--- 	-- Create .deleted directory in /tmp
--- 	local deleted_dir = "/tmp/.deleted"
--- 	vim.fn.mkdir(deleted_dir, "p")
-
--- 	-- Add timestamp to avoid naming conflicts
--- 	local timestamp = os.date("%Y%m%d_%H%M%S")
--- 	local new_path = deleted_dir .. "/" .. timestamp .. "_" .. file_name
-
--- 	-- Move the file
--- 	local result = vim.fn.rename(file_path, new_path)
-
--- 	if result == 0 then
--- 		print("File moved to " .. deleted_dir)
--- 		vim.cmd("bd!")
--- 	else
--- 		print("Error moving file")
--- 	end
--- end
--- vim.keymap.set("n", "<leader>fd", ":lua SoftDeleteFile()<CR>")
+function CopyCurrentFilePath()
+  local path = vim.fn.expand("%:.")
+  vim.fn.setreg("+", path)
+  vim.notify("Copied: " .. path)
+end
+vim.keymap.set("n", "<leader>cfp", ":lua CopyCurrentFilePath()<CR>")
