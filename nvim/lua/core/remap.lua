@@ -18,3 +18,5 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
 -- -- Map Command+l to navigate to next tab
 -- vim.keymap.set("n", "<D-l>", ":tabnext<CR>")
+--
+--

@@ -43,3 +43,35 @@ function CopyCurrentFilePath()
   vim.notify("Copied: " .. path)
 end
 vim.keymap.set("n", "<leader>cfp", ":lua CopyCurrentFilePath()<CR>")
+
+
+-- Copy context snippet (code + metadata) to clipboard for LLM/agent use
+function CopyContextForLLM(visual)
+  local filepath = vim.fn.expand("%:.")
+  local lines
+  local start_line, end_line
+
+  if visual then
+    start_line = vim.fn.line("'<")
+    end_line = vim.fn.line("'>")
+    lines = vim.fn.getline(start_line, end_line)
+  else
+    start_line = vim.fn.line(".")
+    end_line = start_line
+    lines = { vim.fn.getline(start_line) }
+  end
+
+  local header
+  if start_line == end_line then
+    header = filepath .. ":" .. start_line
+  else
+    header = filepath .. ":" .. start_line .. "-" .. end_line
+  end
+
+  local snippet = header .. "\n" .. table.concat(lines, "\n")
+  vim.fn.setreg("+", snippet)
+  vim.notify("Copied context: " .. header)
+end
+
+vim.keymap.set("n", "<leader>sn", ":lua CopyContextForLLM(false)<CR>", { desc = "Copy context for LLM" })
+vim.keymap.set("v", "<leader>sn", ":<C-u>lua CopyContextForLLM(true)<CR>", { desc = "Copy context for LLM" })
