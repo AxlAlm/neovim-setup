@@ -32,7 +32,7 @@ symlinking-nvim-config:
 		mv "$(NVIM_CONFIG_PATH)" "$(BACKUP_PATH)"; \
 	fi
 	@echo "Creating symlink from $(CURRENT_DIR)/nvim to $(NVIM_CONFIG_PATH)"
-	@ln -sf "$(CURRENT_DIR)/nvim" "$(NVIM_CONFIG_PATH)"
+	@ln -sfn "$(CURRENT_DIR)/nvim" "$(NVIM_CONFIG_PATH)"
 
 
 GHOSTTY_CONFIG_PATH := ${HOME}/.config/ghostty
