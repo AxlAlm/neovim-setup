@@ -1,30 +1,27 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-    tag = "v0.10.0",
-	event = { "BufReadPre", "BufNewFile" },
+	branch = "main",
+	lazy = false,
 	build = ":TSUpdate",
 	config = function()
-		require("nvim-treesitter.configs").setup({
-			-- Only essential parsers installed globally
-			-- Language-specific parsers are installed by profiles
-			ensure_installed = {
-				"c",
-				"lua",
-				"vim",
-				"vimdoc",
-				"query",
-				"bash",
-				"json",
-				"yaml",
-				"markdown",
-			},
+		require("nvim-treesitter").install({
+			"c",
+			"lua",
+			"vim",
+			"vimdoc",
+			"query",
+			"bash",
+			"json",
+			"yaml",
+			"markdown",
+			"markdown_inline",
+		})
 
-			sync_install = false,
-			auto_install = false,
-
-			highlight = {
-				enable = true,
-			},
+		vim.api.nvim_create_autocmd("FileType", {
+			callback = function(args)
+				pcall(vim.treesitter.start, args.buf)
+			end,
+			desc = "Start treesitter highlighting",
 		})
 	end,
 }

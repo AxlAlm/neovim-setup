@@ -96,7 +96,7 @@ local function setup_profile(profile, opts)
 				format_on_save = {
 					lsp_fallback = true,
 					async = false,
-					timeout_ms = 1000,
+					timeout_ms = 3000,
 				},
 			})
 		end
@@ -104,14 +104,9 @@ local function setup_profile(profile, opts)
 
 	-- Install treesitter parsers if requested
 	if opts.install_treesitter == true and profile.treesitter_parsers then
-		local ok_ts, ts_parsers = pcall(require, "nvim-treesitter.parsers")
+		local ok_ts, ts = pcall(require, "nvim-treesitter")
 		if ok_ts then
-			for _, parser in ipairs(profile.treesitter_parsers) do
-				-- Only install if not already installed
-				if not ts_parsers.has_parser(parser) then
-					pcall(vim.cmd, "TSInstall " .. parser)
-				end
-			end
+			ts.install(profile.treesitter_parsers)
 		end
 	end
 
@@ -338,8 +333,38 @@ function M.auto_load()
 
 	-- Fall back to .nvim-profiles (legacy format)
 	local profiles_file = project_root .. "/.nvim-profiles"
-	if vim.fn.filereadable(profiles_file) == 1 then
-		M.load_from_file(profiles_file)
+	if vim.fn.filereadable(profiles_file) == 1 and M.load_from_file(profiles_file) then
+		return
+	end
+
+	local by_filetype = {}
+	for _, name in ipairs(M.list_available()) do
+		local ok, profile = pcall(require, "profiles." .. name)
+		if ok then
+			for _, ft in ipairs(profile.filetypes or {}) do
+				by_filetype[ft] = name
+			end
+		end
+	end
+
+	local function load_for(bufnr)
+		local name = by_filetype[vim.bo[bufnr].filetype]
+		if name then
+			M.load(name, { quiet = true })
+		end
+	end
+
+	vim.api.nvim_create_autocmd("FileType", {
+		callback = function(args)
+			load_for(args.buf)
+		end,
+		desc = "Load default profile for filetype",
+	})
+
+	for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.api.nvim_buf_is_loaded(bufnr) then
+			load_for(bufnr)
+		end
 	end
 end
 
