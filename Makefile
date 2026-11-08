@@ -1,9 +1,9 @@
 CURRENT_DIR := $(shell pwd)
 TIMESTAMP := $(shell date +%Y%m%d_%H%M%S)
 
-.PHONY: setup install make_config_dir set_git_editor_neovim symlinking-nvim-config symlinking-ghostty-config symlinking-zsh-config symlinking-gitaliases-config
+.PHONY: setup install make_config_dir set_git_editor_neovim symlinking-nvim-config symlinking-ghostty-config symlinking-zsh-config symlinking-gitaliases-config symlinking-worktree-config
 
-setup: install make_config_dir symlinking-nvim-config symlinking-ghostty-config symlinking-zsh-config symlinking-gitaliases-config set_git_editor_neovim
+setup: install make_config_dir symlinking-nvim-config symlinking-ghostty-config symlinking-zsh-config symlinking-gitaliases-config symlinking-worktree-config set_git_editor_neovim
 	@echo "Setup complete!"
 
 install:
@@ -71,3 +71,11 @@ GITALIAS_PATH := ${HOME}/.gitaliases
 symlinking-gitaliases-config:
 	@echo "Creating symlink from $(CURRENT_DIR)/.gitaliases to $(GITALIAS_PATH)"
 	@ln -sf "$(CURRENT_DIR)/.gitaliases" "$(GITALIAS_PATH)"
+	@git config --global --replace-all include.path '~/.gitaliases' '\.gitaliases$$'
+
+
+WORKTREE_ZSH_DIR := $${ZSH_CUSTOM:-$$HOME/.oh-my-zsh/custom}
+symlinking-worktree-config:
+	@mkdir -p "$(WORKTREE_ZSH_DIR)"
+	@echo "Creating symlink from $(CURRENT_DIR)/ohmyzsh/worktree.zsh to $(WORKTREE_ZSH_DIR)/worktree.zsh"
+	@ln -sf "$(CURRENT_DIR)/ohmyzsh/worktree.zsh" "$(WORKTREE_ZSH_DIR)/worktree.zsh"
