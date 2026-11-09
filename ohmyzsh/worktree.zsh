@@ -66,12 +66,19 @@ cw() {
 
 # List worktrees, most recent commit first
 wl() {
-  _wt_list | awk -F'\t' '{printf("  %d. \033[33m%s: \033[37m %s\033[0m\n", NR, $2, $3)}'
+  _wt_list | awk -F'\t' '
+    { rows[NR] = $0; if (length($3) > w) w = length($3) }
+    END {
+      for (i = 1; i <= NR; i++) {
+        split(rows[i], f, "\t")
+        printf("  %d. \033[33m%s: \033[37m%-*s\033[0m  \033[90m%s\033[0m\n", i, f[2], w, f[3], f[4])
+      }
+    }'
 }
 
-# Focus or open a tab for a worktree, by number from wl or exact/unique partial name
-ws() {
-  local target="${1:?usage: ws <number|name>}"
+# Print the dir of a worktree, by number from wl or exact/unique partial name
+_wt_resolve() {
+  local target="$1"
   local row name
   local -a rows matches
   rows=(${(f)"$(_wt_list)"})
@@ -80,19 +87,19 @@ ws() {
       echo "no worktree number $target" >&2
       return 1
     fi
-    _wt_goto "${rows[$target]##*$'\t'}"
+    echo "${rows[$target]##*$'\t'}"
     return
   fi
   for row in $rows; do
     name="${${row%$'\t'*}##*$'\t'}"
     if [ "$name" = "$target" ]; then
-      _wt_goto "${row##*$'\t'}"
+      echo "${row##*$'\t'}"
       return
     fi
     [[ "$name" == *"$target"* ]] && matches+=("${row##*$'\t'}")
   done
   if (( $#matches == 1 )); then
-    _wt_goto "$matches[1]"
+    echo "$matches[1]"
   elif (( $#matches )); then
     echo "multiple worktrees match '$target':" >&2
     printf '  %s\n' "${matches[@]}" >&2
@@ -101,4 +108,26 @@ ws() {
     echo "no worktree matches '$target'" >&2
     return 1
   fi
+}
+
+# Focus or open a tab for a worktree, by number from wl or exact/unique partial name
+ws() {
+  local dir
+  dir=$(_wt_resolve "${1:?usage: ws <number|name>}") || return
+  _wt_goto "$dir"
+}
+
+# cd into a worktree in this shell, by number from wl or exact/unique partial name
+wj() {
+  local dir
+  dir=$(_wt_resolve "${1:?usage: wj <number|name>}") || return
+  cd "$dir"
+}
+
+# cd back to the main checkout
+wr() {
+  local main
+  main=$(_wt_main)
+  [ -n "$main" ] || return
+  cd "$main"
 }
