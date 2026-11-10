@@ -54,13 +54,26 @@ _wt_goto() {
   _wt_open_tab "$1" "" "${$(_wt_main):t}/${1:t}"
 }
 
-# Start an agent in a new tab and worktree, always branching off the main checkout
+# Start an agent in a new tab and worktree on branch <name>: an existing local or origin branch,
+# else a new one off origin's default branch. Claude would name it worktree-<name>, so the
+# worktree is made here and claude -w reopens it.
 cw() {
-  local name="${1:?usage: cw <name> [claude args]}"
+  local name="${1:?usage: cw <branch> [claude args]}"
   shift
-  local main
+  local main dir
   main=$(_wt_main)
   [ -n "$main" ] || return
+  dir="$main/.claude/worktrees/${name//\//+}"
+  if [ ! -d "$dir" ]; then
+    if git -C "$main" rev-parse -q --verify "refs/heads/$name" >/dev/null ||
+      git -C "$main" rev-parse -q --verify "refs/remotes/origin/$name" >/dev/null; then
+      git -C "$main" worktree add "$dir" "$name" || return
+    elif git -C "$main" rev-parse -q --verify origin/HEAD >/dev/null; then
+      git -C "$main" worktree add --no-track -b "$name" "$dir" origin/HEAD || return
+    else
+      git -C "$main" worktree add -b "$name" "$dir" HEAD || return
+    fi
+  fi
   _wt_open_tab "$main" "claude -w ${(q)name}${@:+ ${(j: :)${(q)@}}}" "${main:t}/$name"
 }
 
