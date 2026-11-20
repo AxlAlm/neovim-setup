@@ -12,6 +12,14 @@ return {
                             path = 1            -- 0 = just filename, 1 = relative path, 2 = absolute path
                         }
                     },
+                    lualine_b = {
+                        function()
+                            return require("git-history").status()
+                        end,
+                        'branch',
+                        'diff',
+                        'diagnostics',
+                    },
                     lualine_x = { 'lsp_status', 'encoding', 'fileformat', 'filetype' }
                 }
             }
