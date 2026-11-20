@@ -50,45 +50,47 @@ APPLESCRIPT
   fi
 }
 
-# Print the dir of a worktree, by number from wt l or exact/unique partial name
+# Print the dir of each worktree, by number from wt l or exact/unique partial name
 _wt_resolve() {
-  local target="$1"
-  local row name
+  local target row name
   local -a rows matches
   rows=(${(f)"$(_wt_list)"})
-  if [[ "$target" == <-> ]]; then
-    if [ -z "$rows[$target]" ]; then
-      echo "no worktree number $target" >&2
+  for target in "$@"; do
+    if [[ "$target" == <-> ]]; then
+      if [ -z "$rows[$target]" ]; then
+        echo "no worktree number $target" >&2
+        return 1
+      fi
+      echo "${rows[$target]##*$'\t'}"
+      continue
+    fi
+    matches=()
+    for row in $rows; do
+      name="${${row%$'\t'*}##*$'\t'}"
+      if [ "$name" = "$target" ]; then
+        matches=("${row##*$'\t'}")
+        break
+      fi
+      [[ "$name" == *"$target"* ]] && matches+=("${row##*$'\t'}")
+    done
+    if (( $#matches == 1 )); then
+      echo "$matches[1]"
+    elif (( $#matches )); then
+      echo "multiple worktrees match '$target':" >&2
+      printf '  %s\n' "${matches[@]}" >&2
+      return 1
+    else
+      echo "no worktree matches '$target'" >&2
       return 1
     fi
-    echo "${rows[$target]##*$'\t'}"
-    return
-  fi
-  for row in $rows; do
-    name="${${row%$'\t'*}##*$'\t'}"
-    if [ "$name" = "$target" ]; then
-      echo "${row##*$'\t'}"
-      return
-    fi
-    [[ "$name" == *"$target"* ]] && matches+=("${row##*$'\t'}")
   done
-  if (( $#matches == 1 )); then
-    echo "$matches[1]"
-  elif (( $#matches )); then
-    echo "multiple worktrees match '$target':" >&2
-    printf '  %s\n' "${matches[@]}" >&2
-    return 1
-  else
-    echo "no worktree matches '$target'" >&2
-    return 1
-  fi
 }
 
 wt() {
   local cmd="${1:-l}"
   (( $# )) && shift
   local main dir branch lock rc
-  local -a force all dirs
+  local -a all dirs
   case "$cmd" in
     l|list)
       _wt_list | awk -F'\t' '
@@ -135,14 +137,13 @@ wt() {
       cd "$main"
       ;;
     d|delete)
-      zparseopts -D -F -- f=force a=all || return
+      zparseopts -D -F -- a=all || return
       main=$(_wt_main)
       [ -n "$main" ] || return
       if (( $#all )); then
         dirs=(${${${(f)"$(_wt_list)"}##*$'\t'}:#$main})
       elif (( $# )); then
-        dir=$(_wt_resolve "$1") || return
-        dirs=("$dir")
+        dirs=(${(uf)"$(_wt_resolve ${(s:,:)${(j:,:)@}})"}) || return
       else
         dir=$(git rev-parse --show-toplevel) || return
         dirs=("$dir")
@@ -164,7 +165,7 @@ wt() {
           fi
           git -C "$main" worktree unlock "$dir"
         fi
-        if ! git -C "$main" worktree remove $force "$dir"; then
+        if ! git -C "$main" worktree remove --force "$dir"; then
           rc=1
           continue
         fi
@@ -185,7 +186,7 @@ usage: wt [command]
   o, open <number|name>            focus or open a tab for a worktree
   cd <number|name>                 cd into a worktree
   r, root                          cd back to the main checkout
-  d, delete [-f] [-a|number|name]  remove a worktree (default: current, -a: all) and its merged branch
+  d, delete [-a|number|name ...]   force-remove worktrees (default: current, -a: all, or 1,3,4) and merged branches
 USAGE
       return 1
       ;;
@@ -208,7 +209,7 @@ _wt() {
   fi
   case "$words[2]" in
     o|open|cd|d|delete)
-      [[ "$words[CURRENT-1]" == (o|open|cd|d|delete|-f) ]] || return
+      [[ "$words[2]" == (d|delete) ]] || (( CURRENT == 3 )) || return
       compadd -- ${${${(f)"$(_wt_list)"}%$'\t'*}##*$'\t'}
       ;;
     n|new)
